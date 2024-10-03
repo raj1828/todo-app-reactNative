@@ -1,8 +1,9 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Text, View, Button, Alert, StyleSheet, Modal, SafeAreaView, TextInput } from "react-native";
 import { useDispatch } from "react-redux";
-import { addTask, editTask } from "../features/tasksSlice";
+import { addTask, editTask, setTask } from "../features/tasksSlice";
 import TaskItems from './../components/TaskItems';
+import {loadFromLocalStorage} from '../features/storage';
 
 export default function Index() {
        const [modalVisible, setModalVisible] = useState(false);
@@ -11,6 +12,14 @@ export default function Index() {
        const [title, setTitle] = useState('');
        const [description, setDiscription] = useState('');
        const dispatch = useDispatch();
+
+       useEffect(() => {
+              const fetchTask = async (task) => {
+                     const tasks = await loadFromLocalStorage();
+                     dispatch(setTask(tasks));
+              };
+              fetchTask();
+       }, [dispatch]);
 
        const handelAddTask = () => {
               setModalVisible(true);
@@ -28,19 +37,35 @@ export default function Index() {
        }
 
        const handleSaveButton = () => {
-              if (isEditMode) {
-                     dispatch(editTask({ id: taskToEdit.id, title, description }));
-              } else {
-                     const newTask = {
-                            id: Math.random().toString(),
-                            title: title,
-                            description: description,
-                     };
-                     dispatch(addTask(newTask));
+
+              const trimTitle = title.trim();
+              const trimDescription = description.trim();
+
+              if(!trimTitle && !trimDescription){
+                Alert.alert('Please fill all the details');
+                return;
               }
-              setModalVisible(false);
-              setTitle('');
-              setDiscription('');
+
+              try {
+                if (isEditMode) {
+                  dispatch(editTask({ id: taskToEdit.id, title, description }));
+                } else {
+                        const newTask = {
+                              id: Math.random().toString(),
+                              title: title,
+                              description: description,
+                        };
+                        dispatch(addTask(newTask));
+                }
+                  setModalVisible(false);
+                  setTitle('');
+                  setDiscription('');
+              } catch (error) {
+                  console.log("Error in saving : ",error);
+                  Alert.alert('Error in Saving from our Side, Please try again later!!')
+              }
+
+              
        };
 
        return (
@@ -52,8 +77,11 @@ export default function Index() {
                      >
                             <SafeAreaView style={styles.safeArea}>
                                    <View style={styles.modalContainer}>
-                                          <Text style={styles.modalTitle}>{isEditMode ? 'Edit Task' : 'Add Task'}</Text>
-
+                                      <View style={{flexDirection: "row", justifyContent: "space-between"}}>
+                                            <Text style={styles.modalTitle}>{isEditMode ? 'Edit Task' : 'Add Task'}</Text>
+                                            <Button title="X" onPress={() => setModalVisible(false)} />
+                                      </View>
+                                          
                                           <Text style={styles.modalContent}>Title</Text>
                                           <TextInput
                                                  style={styles.modalInput}

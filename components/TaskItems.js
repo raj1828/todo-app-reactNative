@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { Text, View, StyleSheet, Button } from 'react-native'
+import { Text, View, StyleSheet, Button, ScrollView } from 'react-native'
 import { useSelector, useDispatch } from 'react-redux'
 import { deleteTask, editTask } from '../features/tasksSlice'
 
@@ -11,7 +11,8 @@ const TaskItems = ({ onEditTask }) => {
 
 
        return (
-              <View style={styles.mainContainer}>
+              <ScrollView contentContainerStyle= {styles.scrollContainer}>
+                     <View style={styles.mainContainer}>
                      {
                             tasks.map(task => (
                                    <View key={task.id} style={styles.taskItem}>
@@ -33,6 +34,8 @@ const TaskItems = ({ onEditTask }) => {
                             ))
                      }
               </View>
+              </ScrollView>
+              
        )
 }
 
@@ -79,6 +82,13 @@ const styles = StyleSheet.create({
               flex: 1,
               marginHorizontal: 5,
        },
+       scrollContainer:{
+              width: 400
+              // flex: 1,
+              // padding: 10,
+              // flexGrow: 1,
+              // justifyContent: 'flex-start'
+       }
 })
 
 export default TaskItems
