@@ -4,6 +4,8 @@ import { useDispatch } from "react-redux";
 import { addTask, editTask, setTask } from "../features/tasksSlice";
 import TaskItems from './../components/TaskItems';
 import {loadFromLocalStorage} from '../features/storage';
+import Translation from '../components/Translation';
+import Toast from 'react-native-root-toast';
 
 export default function Index() {
        const [modalVisible, setModalVisible] = useState(false);
@@ -58,6 +60,9 @@ export default function Index() {
                         dispatch(addTask(newTask));
                 }
                   setModalVisible(false);
+                  Toast.show('Task Added Successfully', {
+                     duration: Toast.durations.LONG,
+                   });
                   setTitle('');
                   setDiscription('');
               } catch (error) {
@@ -126,6 +131,9 @@ export default function Index() {
                      </View>
 
                      <TaskItems onEditTask={handleEditTask} />
+                     
+                     <Translation/>     
+                     
               </View>
 
        );

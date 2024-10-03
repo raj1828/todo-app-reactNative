@@ -2,16 +2,14 @@ import React, { useState } from 'react'
 import { Text, View, StyleSheet, Button, ScrollView } from 'react-native'
 import { useSelector, useDispatch } from 'react-redux'
 import { deleteTask, editTask } from '../features/tasksSlice'
+import Toast from 'react-native-root-toast';
+
 
 const TaskItems = ({ onEditTask }) => {
        const tasks = useSelector(state => state.tasks);
        const dispatch = useDispatch();
-
-
-
-
        return (
-              <ScrollView contentContainerStyle= {styles.scrollContainer}>
+              <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle= {styles.scrollContainer}>
                      <View style={styles.mainContainer}>
                      {
                             tasks.map(task => (
@@ -27,7 +25,13 @@ const TaskItems = ({ onEditTask }) => {
                                                  <Button
                                                         style={styles.btn}
                                                         title="Delete"
-                                                        onPress={() => dispatch(deleteTask(task.id))}
+                                                        onPress={() => {
+                                                               dispatch(deleteTask(task.id))
+                                                               Toast.show('Task Delete Successfully.', {
+                                                                      duration: Toast.durations.LONG,
+                                                                    }); 
+                                                               }
+                                                        } 
                                                  />
                                           </View>
                                    </View>
