@@ -1,6 +1,7 @@
 import React from 'react'
 import { useDispatch } from 'react-redux';
-import { StyleSheet } from 'react-native';
+import { StyleSheet, View, TextInput, Button  } from 'react-native';
+import { register } from '@/features/authSlice';
 
 const RegisterPage = () => {
     const [email, setEmail] = React.useState('');

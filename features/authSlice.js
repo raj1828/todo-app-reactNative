@@ -5,7 +5,7 @@ const authSlice = createSlice({
     name: 'auth',
     initialState: {
         isAuthenticated: false,
-        user: null
+        users: []
     },
     reducers: {
         login: (state, action) => {
@@ -17,8 +17,8 @@ const authSlice = createSlice({
             state.isAuthenticated = false;
         },
         register: (state, action) => {
-            state.push(action.payload);
-            saveUserToLocalStorage(state);
+            state.users.push(action.payload);
+            saveUserToLocalStorage(state.users);
 
         },
     },
