@@ -7,22 +7,46 @@ import { useNavigation } from '@react-navigation/native';
 const RegisterPage = () => {
        const [email, setEmail] = React.useState('');
        const [password, setPassword] = React.useState('');
+       const [emailError, setEmailError] = React.useState('');
+       const [passwordError, setPasswordError] = React.useState('');
        const dispatch = useDispatch();
        const navigation = useNavigation();
 
        const handleRegister = () => {
-              
-              try {
-                     const newUser = {
-                            id: Math.random().toString(),
-                            email: email,
-                            password: password,
-                     }
-                     dispatch(register(newUser));
-                     navigation.navigate('Login');
-              } catch (error) {
-                     console.log('Error in Saving Data', error);
+              setEmailError('');
+              setPasswordError('');
+
+              let hasError = false;
+
+              if(!email){
+                     setEmailError('Email is required');
+                     hasError = true;
               }
+              if (!password) {
+                     setPasswordError('Password is required');
+                     hasError = true;
+              } else if (password.length < 8) {
+                     setPasswordError('Password should be at least 8 characters long');
+                     hasError = true;
+              }
+
+              if(!hasError){
+                     try {
+                            const newUser = {
+                                   id: Math.random().toString(),
+                                   email: email,
+                                   password: password,
+                            }
+                            dispatch(register(newUser));
+                            navigation.navigate('Login');
+                     } catch (error) {
+                            console.log('Error in Saving Data', error);
+                     }
+              }
+
+                     
+              
+              
        }
 
        return (
@@ -35,6 +59,10 @@ const RegisterPage = () => {
                             onChangeText={setEmail}
                             keyboardType="email-address"
                      />
+                     {
+                            emailError ?
+                            <Text style={{ color:'red', marginBottom: 15}}>{emailError}</Text> : null
+                     }
                      <TextInput
                             style={styles.input}
                             placeholder="Password"
@@ -42,6 +70,11 @@ const RegisterPage = () => {
                             onChangeText={setPassword}
                             secureTextEntry
                      />
+                     {
+                            passwordError ?
+                            <Text style={{ color:'red', marginBottom: 15}}>{passwordError}</Text> : null
+                     }
+              
                      <TouchableOpacity style={styles.button} onPress={handleRegister}>
                             <Text style={styles.buttonText}>Register</Text>
                      </TouchableOpacity>
