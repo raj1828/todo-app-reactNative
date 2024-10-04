@@ -24,16 +24,20 @@ export default function Index() {
     const loggedInUser = useSelector(state => state.users.loggedInUser);
     console.log('Logged in User', loggedInUser); 
 
-       useEffect(() => {
-              const fetchTask = async (task) => {
-                     if(loggedInUser){
-                            const userTasks = await AsyncStorage.getItem(`tasks_${loggedInUser.email}`);
-                            const tasks = userTasks ? JSON.parse(userTasks) : [];
-                            dispatch(setTask(tasks));
-                     }
-              };
-              fetchTask();
-       }, [ loggedInUser, dispatch]);
+    useEffect(() => {
+       const fetchTask = async () => {
+           if (loggedInUser) {
+               try {
+                   const userTasks = await AsyncStorage.getItem(`tasks_${loggedInUser.email}`);
+                   const tasks = userTasks ? JSON.parse(userTasks) : [];
+                   dispatch(setTask(tasks));
+               } catch (error) {
+                   console.log("Error fetching tasks: ", error);
+               }
+           }
+       };
+       fetchTask();
+   }, [loggedInUser, dispatch]);
 
        const handelAddTask = () => {
               setModalVisible(true);
@@ -51,6 +55,7 @@ export default function Index() {
        }
        const handelLogout = () => {
               dispatch(logout());
+              dispatch(setTask([]));
               navigation.navigate('Login');
        };
 
@@ -64,56 +69,63 @@ export default function Index() {
                 return;
               }
 
-              try {
-                if (isEditMode) {
-                  dispatch(editTask({ id: taskToEdit.id, title, description }));
-                } else {
-                        const newTask = {
-                              id: Math.random().toString(),
-                              title: title,
-                              description: description,
-                        };
-                        dispatch(addTask(newTask));
-                }
+              // try {
+              //   if (isEditMode) {
+              //     dispatch(editTask({ id: taskToEdit.id, title, description }));
+              //   } else {
+              //           const newTask = {
+              //                 id: Math.random().toString(),
+              //                 title: title,
+              //                 description: description,
+              //           };
+              //           dispatch(addTask(newTask));
+              //   }
                 if (!loggedInUser) {
                      Alert.alert('You need to be logged in to save tasks.');
                      return;
                  }
 
-                const userTask = await AsyncStorage.getItem(JSON.stringify(`tasks_${loggedInUser.email}`));
-                const tasks = userTask ? JSON.parse(userTask) : [];
-
-                if(isEditMode){
-                     try {
-                            const updatedTasks = tasks.map(task => {
-                                   if(task.id === taskToEdit.id){
-                                          return {...task, title, description};
-                                   }
-                                   return task;
-                            })
-                            await AsyncStorage.setItem(`tasks_${loggedInUser.email}`, updatedTasks);
-                     } catch (error) {
-                            console.log(error);
+                 try {
+                     let userTasks = await AsyncStorage.getItem(`tasks_${loggedInUser.email}`);
+                     userTasks = userTasks ? JSON.parse(userTasks) : [];
+             
+                     const newTask = {
+                         id: Math.random().toString(),
+                         title: trimTitle,
+                         description: trimDescription,
+                     };
+             
+                     if (isEditMode) {
+                         // Update the task
+                         userTasks = userTasks.map(task => 
+                             task.id === taskToEdit.id ? { ...task, title: trimTitle, description: trimDescription } : task
+                         );
+                     } else {
+                         // Add new task
+                         userTasks.push(newTask);
                      }
-                }else{
-                     try {
-                            tasks.push(newTask);
-                            await AsyncStorage.setItem(`tasks_${loggedInUser.email}`, JSON.stringify(tasks));
-                     } catch (error) {
-                            console.log(error);
-                     }
-                }
-
-                  setModalVisible(false);
-                  Toast.show('Task Added Successfully', {
-                     duration: Toast.durations.LONG,
-                   });
-                  setTitle('');
-                  setDiscription('');
-              } catch (error) {
-                  console.log("Error in saving : ",error);
-                  Alert.alert('Error in Saving from our Side, Please try again later!!')
-              }
+             
+                     // Save updated tasks back to AsyncStorage
+                     await AsyncStorage.setItem(`tasks_${loggedInUser.email}`, JSON.stringify(userTasks));
+             
+                     // Update Redux state
+                     dispatch(setTask(userTasks));
+             
+                     // Close modal and reset inputs
+                     setModalVisible(false);
+                     Toast.show(isEditMode ? 'Task Updated Successfully' : 'Task Added Successfully', {
+                         duration: Toast.durations.LONG,
+                     });
+                     setTitle('');
+                     setDiscription('');
+                 } catch (error) {
+                     console.log("Error in saving: ", error);
+                     Alert.alert('Error in Saving from our Side, Please try again later!!');
+                 }
+              // } catch (error) {
+              //     console.log("Error in saving : ",error);
+              //     Alert.alert('Error in Saving from our Side, Please try again later!!')
+              // }
 
               
        };
@@ -154,30 +166,39 @@ export default function Index() {
                      <View
                             style={{
                                    height: 60,
-                                   justifyContent: "space-between",
-                                   margin: 20,
+                                   justifyContent: "space-around",
+                                   margin: 10,
                                    flexDirection: "row",
                                    alignItems: "center",
                             }}
                      >
-                            <Text
-                                   style={{
-                                          fontSize: 40,
-                                          fontWeight: 'bold',
-                                          marginRight: 10,
-                                   }}
-                            >ToDo App</Text>
-
+                            <View>
+                                   <Text
+                                          style={{
+                                                 fontSize: 40,
+                                                 fontWeight: 'bold',
+                                                 marginRight: 10,
+                                          }}
+                                   >ToDo App</Text>
+                            </View>
+                            <View>
                             <Button
                                    title="Add Task"
                                    style={{ height: 40 }}
                                    onPress={handelAddTask}
                             />
+                            </View>
+                            
+
+                            <View style={{marginLeft:40}}>
                             <Button
                                    title="Log Out"
                                    style={{ height: 40 }}
                                    onPress={handelLogout}
                             />
+                            </View>
+                            
+                            
                      </View>
 
                      <TaskItems onEditTask={handleEditTask} />

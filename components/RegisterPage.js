@@ -11,6 +11,7 @@ const RegisterPage = () => {
        const navigation = useNavigation();
 
        const handleRegister = () => {
+              
               try {
                      const newUser = {
                             id: Math.random().toString(),

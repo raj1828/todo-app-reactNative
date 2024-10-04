@@ -178,7 +178,8 @@ const styles = StyleSheet.create({
     borderWidth:1,
     borderColor:'#ccc',
     padding:10,
-    marginBottom:10
+    marginBottom:10,
+    width: 380
   },
   translateText:{
     fontSize:18,
@@ -191,7 +192,7 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderRadius: 8,
     paddingHorizontal: 10,
-    width: '100%',
+    width: 380,
     marginBottom: 20,
   },
   scrollContainer:{
