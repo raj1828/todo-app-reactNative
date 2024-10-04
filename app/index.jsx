@@ -1,11 +1,16 @@
 import { useState, useEffect } from "react";
 import { Text, View, Button, Alert, StyleSheet, Modal, SafeAreaView, TextInput } from "react-native";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { addTask, editTask, setTask } from "../features/tasksSlice";
+import { logout } from "../features/authSlice";
 import TaskItems from './../components/TaskItems';
 import {loadFromLocalStorage} from '../features/storage';
 import Translation from '../components/Translation';
 import Toast from 'react-native-root-toast';
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { useNavigation } from '@react-navigation/native';
+
+
 
 export default function Index() {
        const [modalVisible, setModalVisible] = useState(false);
@@ -13,15 +18,22 @@ export default function Index() {
        const [taskToEdit, setTaskToEdit] = useState(null);
        const [title, setTitle] = useState('');
        const [description, setDiscription] = useState('');
+       const navigation = useNavigation();
        const dispatch = useDispatch();
+       // Access the loggedInUser correctly
+    const loggedInUser = useSelector(state => state.users.loggedInUser);
+    console.log('Logged in User', loggedInUser); 
 
        useEffect(() => {
               const fetchTask = async (task) => {
-                     const tasks = await loadFromLocalStorage();
-                     dispatch(setTask(tasks));
+                     if(loggedInUser){
+                            const userTasks = await AsyncStorage.getItem(`tasks_${loggedInUser.email}`);
+                            const tasks = userTasks ? JSON.parse(userTasks) : [];
+                            dispatch(setTask(tasks));
+                     }
               };
               fetchTask();
-       }, [dispatch]);
+       }, [ loggedInUser, dispatch]);
 
        const handelAddTask = () => {
               setModalVisible(true);
@@ -37,8 +49,12 @@ export default function Index() {
               setTitle(task.title);
               setDiscription(task.description);
        }
+       const handelLogout = () => {
+              dispatch(logout());
+              navigation.navigate('Login');
+       };
 
-       const handleSaveButton = () => {
+       const handleSaveButton = async () => {
 
               const trimTitle = title.trim();
               const trimDescription = description.trim();
@@ -59,6 +75,35 @@ export default function Index() {
                         };
                         dispatch(addTask(newTask));
                 }
+                if (!loggedInUser) {
+                     Alert.alert('You need to be logged in to save tasks.');
+                     return;
+                 }
+
+                const userTask = await AsyncStorage.getItem(JSON.stringify(`tasks_${loggedInUser.email}`));
+                const tasks = userTask ? JSON.parse(userTask) : [];
+
+                if(isEditMode){
+                     try {
+                            const updatedTasks = tasks.map(task => {
+                                   if(task.id === taskToEdit.id){
+                                          return {...task, title, description};
+                                   }
+                                   return task;
+                            })
+                            await AsyncStorage.setItem(`tasks_${loggedInUser.email}`, updatedTasks);
+                     } catch (error) {
+                            console.log(error);
+                     }
+                }else{
+                     try {
+                            tasks.push(newTask);
+                            await AsyncStorage.setItem(`tasks_${loggedInUser.email}`, JSON.stringify(tasks));
+                     } catch (error) {
+                            console.log(error);
+                     }
+                }
+
                   setModalVisible(false);
                   Toast.show('Task Added Successfully', {
                      duration: Toast.durations.LONG,
@@ -109,7 +154,7 @@ export default function Index() {
                      <View
                             style={{
                                    height: 60,
-                                   justifyContent: "space-around",
+                                   justifyContent: "space-between",
                                    margin: 20,
                                    flexDirection: "row",
                                    alignItems: "center",
@@ -127,6 +172,11 @@ export default function Index() {
                                    title="Add Task"
                                    style={{ height: 40 }}
                                    onPress={handelAddTask}
+                            />
+                            <Button
+                                   title="Log Out"
+                                   style={{ height: 40 }}
+                                   onPress={handelLogout}
                             />
                      </View>
 

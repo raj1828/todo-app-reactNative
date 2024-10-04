@@ -44,6 +44,12 @@ const RegisterPage = () => {
                      <TouchableOpacity style={styles.button} onPress={handleRegister}>
                             <Text style={styles.buttonText}>Register</Text>
                      </TouchableOpacity>
+                     <Text style={styles.registerText}>
+                            Already have an account?{' '}
+                            <Text style={styles.registerLink} onPress={() => navigation.navigate('Login')}>
+                                   Login
+                            </Text>
+                     </Text>
               </View>
        )
 }
@@ -82,6 +88,15 @@ const styles = StyleSheet.create({
        buttonText: {
               color: '#fff',
               fontSize: 16,
+              fontWeight: 'bold',
+       },
+       registerText: {
+              marginTop: 15,
+              fontSize: 14,
+              color: '#333',
+       },
+       registerLink: {
+              color: '#007bff',
               fontWeight: 'bold',
        },
 });

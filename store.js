@@ -4,8 +4,8 @@ import usersReducer from './features/authSlice';
 
 const store = configureStore({
        reducer: {
+              users: usersReducer,
               tasks: taskReducer,
-              users: usersReducer
        }
 })
 export default store;

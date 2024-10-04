@@ -23,12 +23,14 @@ const LoginPage = () => {
 
        const handleLogin = () => {
               const user = users.find(u => u.email === email && u.password === password);
+              console.log(user);
               if (user) {
                      dispatch(login(user)); // Dispatch login action
                      navigation.navigate('Tasks'); // Navigate to HomePage after login
               } else {
                      Alert.alert('Invalid credentials', 'Please check your email and password');
               }
+              
        };
        return (
               <View style={styles.container}>
