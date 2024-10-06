@@ -10,6 +10,8 @@ const LoginPage = () => {
        const [email, setEmail] = useState('');
        const [password, setPassword] = useState('');
        const [users, setUsers] = useState([]);
+       const [emailError, setEmailError] = useState('');
+       const [passwordError, setPasswordError] = useState('');
        const dispatch = useDispatch();
        const navigation = useNavigation();
 
@@ -22,15 +24,37 @@ const LoginPage = () => {
        }, []);
 
        const handleLogin = () => {
-              const user = users.find(u => u.email === email && u.password === password);
-              console.log(user);
-              if (user) {
-                     dispatch(login(user)); // Dispatch login action
-                     navigation.navigate('Tasks'); // Navigate to HomePage after login
-              } else {
-                     Alert.alert('Invalid credentials', 'Please check your email and password');
+              setEmailError('');
+              setPasswordError('');
+
+              let hasError = false;
+
+              if (!email) {
+                     setEmailError("Please enter a valid email");
+                     hasError = true;
               }
-              
+              if (!password) {
+                     setPasswordError('Please enter a valid password');
+                     hasError = true;
+              }
+
+              if (!hasError) {
+                     try {
+                            const user = users.find(u => u.email === email && u.password === password);
+                            console.log(user);
+                            if (user) {
+                                   dispatch(login(user));
+                                   navigation.navigate('Tasks');
+                            } else {
+                                   Alert.alert('Invalid credentials', 'Please check your email and password');
+                            }
+                     } catch (error) {
+                            console.log(error);
+                     }
+              }
+
+
+
        };
        return (
               <View style={styles.container}>
@@ -42,6 +66,10 @@ const LoginPage = () => {
                             onChangeText={setEmail}
                             keyboardType="email-address"
                      />
+                     {
+                            emailError ?
+                                   <Text style={{ color: 'red', marginBottom: 15 }}>{emailError}</Text> : null
+                     }
                      <TextInput
                             style={styles.input}
                             placeholder="Password"
@@ -49,6 +77,10 @@ const LoginPage = () => {
                             onChangeText={setPassword}
                             secureTextEntry
                      />
+                     {
+                            passwordError ?
+                                   <Text style={{ color: 'red', marginBottom: 15 }}>{emailError}</Text> : null
+                     }
                      <TouchableOpacity style={styles.button} onPress={handleLogin}>
                             <Text style={styles.buttonText}>Login</Text>
                      </TouchableOpacity>
