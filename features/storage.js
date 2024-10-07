@@ -31,8 +31,12 @@ export const fetchTranslations = async (inputText, language) => {
               console.log(language);
               const data = await fetch(`https://api.mymemory.translated.net/get?q=${inputText}&langpair=en-GB|${language}`)
               const response = await data.json();
+              
+              const result = [];
               const translation = response.responseData.translatedText
-              return translation;
+              const match = response.responseData.match
+              result.push({ text: translation, matches: match });
+              return result;
        } catch (error) {
               console.log('Error in Traslating through API', error);
        }
@@ -40,9 +44,9 @@ export const fetchTranslations = async (inputText, language) => {
 
 export const saveUserToLocalStorage = async (users) => {
        try {
-              // Ensure the object is a plain JavaScript object by using JSON methods
+              
               const plainUsers = JSON.parse(JSON.stringify(users));
-              const jsonValue = JSON.stringify(plainUsers); // Now stringify the plain object
+              const jsonValue = JSON.stringify(plainUsers); 
               await AsyncStorage.setItem(storeUsers, jsonValue);
               console.log('User saved to AsyncStorage:', jsonValue);
        } catch (error) {

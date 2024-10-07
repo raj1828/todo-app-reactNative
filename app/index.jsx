@@ -20,7 +20,7 @@ export default function Index() {
        const [description, setDiscription] = useState('');
        const navigation = useNavigation();
        const dispatch = useDispatch();
-       // Access the loggedInUser correctly
+      
     const loggedInUser = useSelector(state => state.users.loggedInUser);
     console.log('Logged in User', loggedInUser); 
 
@@ -54,10 +54,38 @@ export default function Index() {
               setDiscription(task.description);
        }
        const handelLogout = () => {
-              dispatch(logout());
-              dispatch(setTask([]));
-              navigation.navigate('Login');
-       };
+              Alert.alert(
+                "Logout",
+                "Are you sure you want to logout?",
+                [
+                  {
+                    text: "Cancel",
+                    onPress: () => console.log("Cancel Pressed"),
+                    style: "cancel"
+                  },
+                  {
+                    text: "Yes",
+                    onPress: () => {
+                      
+                      logoutApp();
+                    },
+                    style: "default"
+                  }
+                ],
+                { cancelable: false }
+              );
+            };
+            
+            const logoutApp = () => {
+              
+              dispatch(logout()); 
+              dispatch(setTask([])); 
+              Alert.alert('Thank You for Using'); 
+              setTimeout(() => {
+                navigation.navigate('Login');
+              }, 1000);
+            };
+            
 
        const handleSaveButton = async () => {
 
@@ -108,10 +136,10 @@ export default function Index() {
                      // Save updated tasks back to AsyncStorage
                      await AsyncStorage.setItem(`tasks_${loggedInUser.email}`, JSON.stringify(userTasks));
              
-                     // Update Redux state
+                     
                      dispatch(setTask(userTasks));
              
-                     // Close modal and reset inputs
+                    
                      setModalVisible(false);
                      Toast.show(isEditMode ? 'Task Updated Successfully' : 'Task Added Successfully', {
                          duration: Toast.durations.LONG,
@@ -133,8 +161,8 @@ export default function Index() {
        return (
               <View style={styles.centerdView}>
                      <Modal
-                            transparent={true} // Make the background transparent
-                            animationType="slide" // Animation type
+                            transparent={true} 
+                            animationType="slide" 
                             visible={modalVisible}
                      >
                             <SafeAreaView style={styles.safeArea}>
@@ -222,7 +250,7 @@ const styles = StyleSheet.create({
               backgroundColor: 'white',
               borderRadius: 10,
               padding: 20,
-              elevation: 5, // Android shadow effect
+              elevation: 5,
        },
        modalInput: {
               marginBottom: 10,
