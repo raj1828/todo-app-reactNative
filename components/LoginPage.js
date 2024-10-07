@@ -24,6 +24,8 @@ const LoginPage = () => {
        }, []);
 
        const handleLogin = () => {
+
+              var validRegex = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/;
               setEmailError('');
               setPasswordError('');
 
@@ -31,6 +33,10 @@ const LoginPage = () => {
 
               if (!email) {
                      setEmailError("Please enter a valid email");
+                     hasError = true;
+              }
+              if(!validRegex.test(email)){
+                     setEmailError('Invalid email format');
                      hasError = true;
               }
               if (!password) {
@@ -44,7 +50,7 @@ const LoginPage = () => {
                             console.log(user);
                             if (user) {
                                    dispatch(login(user));
-                                   navigation.navigate('Tasks');
+                                   navigation.replace('Tasks');
                             } else {
                                    Alert.alert('Invalid credentials', 'Please check your email and password');
                             }

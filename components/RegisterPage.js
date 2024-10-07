@@ -16,10 +16,16 @@ const RegisterPage = () => {
               setEmailError('');
               setPasswordError('');
 
+              var validRegex = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/;
+
               let hasError = false;
 
               if(!email){
                      setEmailError('Email is required');
+                     hasError = true;
+              }
+              if(!validRegex.test(email)){
+                     setEmailError('Invalid email format');
                      hasError = true;
               }
               if (!password) {
@@ -38,7 +44,7 @@ const RegisterPage = () => {
                                    password: password,
                             }
                             dispatch(register(newUser));
-                            navigation.navigate('Login');
+                            navigation.replace('Login');
                      } catch (error) {
                             console.log('Error in Saving Data', error);
                      }
