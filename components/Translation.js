@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { View, Text, TextInput, StyleSheet, Button, Alert, ScrollView } from 'react-native';
 import {fetchTranslations} from '../features/storage';
 import { Dropdown } from "react-native-element-dropdown"
+import Loader from "../features/Loader"
 
 
 
@@ -10,6 +11,7 @@ const Translation = () => {
   const [inputText, setInputText] = useState('');
   const [translatedText, setTranslatedText] = useState('');
   const [selectedLanguage, setSelectedLanguage] = useState('en-GB');
+  const [isLoading, setIsLoading] = useState(false);
 
   const languages =  [
     { label: 'Amharic', value: 'am-ET' },
@@ -112,12 +114,14 @@ const Translation = () => {
   ];
 
   const handleTranslate = async  () => {
+    setIsLoading(true);
     console.log(selectedLanguage)
 
     try {
         
         const translatedData = await fetchTranslations(inputText, selectedLanguage);
         setTranslatedText(translatedData);
+        setIsLoading(false)
 
     } catch (error) {
         console.log(error);
@@ -153,6 +157,11 @@ const Translation = () => {
       <View style={styles.buttonContainer}>
         <Button title="Translate" onPress={handleTranslate} color="#4CAF50" />
       </View>
+
+      {
+        isLoading ? ( <Loader />  ) : null 
+      }
+
       {translatedText ? (
         <Text style={styles.translateText}>Translation: {translatedText}</Text>
       ) : null}
