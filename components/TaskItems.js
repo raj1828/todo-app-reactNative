@@ -1,47 +1,48 @@
-import React, { useState } from 'react'
-import { Text, View, StyleSheet, Button, ScrollView } from 'react-native'
-import { useSelector, useDispatch } from 'react-redux'
-import { deleteTask, editTask } from '../features/tasksSlice'
+import React from 'react';
+import { Text, View, StyleSheet, FlatList, TouchableOpacity } from 'react-native';
+import { useSelector, useDispatch } from 'react-redux';
+import { deleteTask } from '../features/tasksSlice';
 import Toast from 'react-native-root-toast';
-
-
+import Icon from "react-native-vector-icons/Ionicons";
 
 const TaskItems = ({ onEditTask }) => {
        const tasks = useSelector(state => state.tasks);
        const dispatch = useDispatch();
-       return (
-              <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle= {styles.scrollContainer}>
-                     <View style={styles.mainContainer}>
-                     {
-                            tasks.map(task => (
-                                   <View key={task.id} style={styles.taskItem}>
-                                          <Text style={styles.heading}>Note : </Text>
-                                          <Text style={styles.heading}>{task.title}</Text>
-                                          <Text style={styles.desc}>{task.description}</Text>
-                                          <View style={styles.actionBtn}>
-                                                 <Button style={styles.btn}
-                                                        title="Edit"
-                                                        onPress={() => onEditTask(task)}
-                                                 />
-                                                 <Button
-                                                        style={styles.btn}
-                                                        title="Delete"
-                                                        onPress={() => {
-                                                               dispatch(deleteTask(task.id))
-                                                               Toast.show('Task Delete Successfully.', {
-                                                                      duration: Toast.durations.LONG,
-                                                                    }); 
-                                                               }
-                                                        } 
-                                                 />
-                                          </View>
-                                   </View>
-                            ))
-                     }
+
+       const renderTaskItems = ({ item }) => (
+              <View style={styles.taskItem}>
+                     <Text style={styles.heading}>Note:</Text>
+                     <Text style={styles.title}>{item.title}</Text>
+                     <Text style={styles.desc}>{item.description}</Text>
+                     <View style={styles.actionBtn}>
+                            <TouchableOpacity onPress={() => onEditTask(item)} style={styles.iconButton}>
+                                   <Icon name="create-outline" size={25} color="#fff" />
+                            </TouchableOpacity>
+                            <TouchableOpacity
+                                   onPress={() => {
+                                          dispatch(deleteTask(item.id));
+                                          Toast.show('Task Deleted Successfully.', {
+                                                 duration: Toast.durations.LONG,
+                                          });
+                                   }}
+                                   style={styles.iconButton}
+                            >
+                                   <Icon name="trash-outline" size={25} color="#fff" />
+                            </TouchableOpacity>
+                     </View>
               </View>
-              </ScrollView>
-              
-       )
+       );
+
+       return (
+              <FlatList
+                     data={tasks}
+                     renderItem={renderTaskItems}
+                     keyExtractor={(item) => item.id.toString()}
+                     contentContainerStyle={styles.mainContainer}
+                     showsVerticalScrollIndicator={false}
+                     numColumns={2}
+              />
+       );
 }
 
 const styles = StyleSheet.create({
@@ -53,7 +54,7 @@ const styles = StyleSheet.create({
        },
        taskItem: {
               width: '48%',
-              backgroundColor: '#f8f8f8',
+              backgroundColor: '#f4511e',  // Main background color
               padding: 15,
               borderRadius: 10,
               marginBottom: 15,
@@ -67,33 +68,32 @@ const styles = StyleSheet.create({
        heading: {
               fontSize: 16,
               fontWeight: 'bold',
+              color: '#fff', // White text for contrast
               marginBottom: 5,
        },
        title: {
               fontSize: 14,
-              color: '#333',
+              color: '#fff', // White text for contrast
               marginBottom: 10,
        },
        desc: {
               fontSize: 12,
-              color: '#666',
+              color: '#fff', // White text for contrast
               marginBottom: 10,
        },
        actionBtn: {
               flexDirection: 'row',
               justifyContent: 'space-between',
+              marginTop: 10,
        },
-       btn: {
-              flex: 1,
-              marginHorizontal: 5,
+       iconButton: {
+              backgroundColor: '#dd2c00',  // Button background color
+              padding: 10,
+              borderRadius: 5,
+              alignItems: 'center',
+              justifyContent: 'center',
+              width: '45%',
        },
-       scrollContainer:{
-              width: 400
-              // flex: 1,
-              // padding: 10,
-              // flexGrow: 1,
-              // justifyContent: 'flex-start'
-       }
-})
+});
 
-export default TaskItems
+export default TaskItems;
