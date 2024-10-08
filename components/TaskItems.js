@@ -5,6 +5,7 @@ import { deleteTask, editTask } from '../features/tasksSlice'
 import Toast from 'react-native-root-toast';
 
 
+
 const TaskItems = ({ onEditTask }) => {
        const tasks = useSelector(state => state.tasks);
        const dispatch = useDispatch();
