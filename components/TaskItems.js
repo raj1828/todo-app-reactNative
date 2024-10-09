@@ -4,16 +4,32 @@ import { useSelector, useDispatch } from 'react-redux';
 import { deleteTask } from '../features/tasksSlice';
 import Toast from 'react-native-root-toast';
 import Icon from "react-native-vector-icons/Ionicons";
+import { editTask } from '../features/tasksSlice';
 
 const TaskItems = ({ onEditTask }) => {
        const tasks = useSelector(state => state.tasks);
        const dispatch = useDispatch();
+
+       const toggleStatus = (task) => {
+              const updatedTask = { ...task, status: task.status === 'completed' ? 'pending' : 'completed' };
+              dispatch(editTask(updatedTask));
+       };
 
        const renderTaskItems = ({ item }) => (
               <View style={styles.taskItem}>
                      <Text style={styles.heading}>Note:</Text>
                      <Text style={styles.title}>{item.title}</Text>
                      <Text style={styles.desc}>{item.description}</Text>
+                     <Text style={styles.status}>
+                            {item.status === 'completed' ? '✔ Completed' : '⏳ Pending'}
+                     </Text>
+                     <TouchableOpacity onPress={() => toggleStatus(item)} style={styles.iconButton}>
+                            <Icon
+                                   name={item.status === 'completed' ? 'checkmark-circle' : 'ellipse-outline'}
+                                   size={25}
+                                   color="#fff"
+                            />
+                     </TouchableOpacity>
                      <View style={styles.actionBtn}>
                             <TouchableOpacity onPress={() => onEditTask(item)} style={styles.iconButton}>
                                    <Icon name="create-outline" size={25} color="#fff" />
@@ -39,7 +55,7 @@ const TaskItems = ({ onEditTask }) => {
                      renderItem={renderTaskItems}
                      keyExtractor={(item) => item.id.toString()}
                      contentContainerStyle={styles.mainContainer}
-                     showsVerticalScrollIndicator={false}
+                     showsVerticalScrollIndicator={true}
                      numColumns={2}
               />
        );

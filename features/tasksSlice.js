@@ -1,5 +1,5 @@
 import { createSlice } from "@reduxjs/toolkit";
-import {saveToLocalStorage, loadFromLocalStorage} from './storage';
+import { saveToLocalStorage, loadFromLocalStorage } from './storage';
 
 
 const tasksSlice = createSlice({
@@ -18,7 +18,7 @@ const tasksSlice = createSlice({
                      }
               },
               deleteTask: (state, action) => {
-                     const newState =  state.filter(task => task.id !== action.payload);
+                     const newState = state.filter(task => task.id !== action.payload);
                      saveToLocalStorage(state);
                      return newState;
               },

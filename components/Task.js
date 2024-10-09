@@ -1,10 +1,10 @@
 import { useState, useEffect } from "react";
-import { Text, View, Button, Alert, StyleSheet, Modal,TouchableWithoutFeedback, SafeAreaView, TextInput, TouchableOpacity } from "react-native";
+import { Text, View, Button, Alert, StyleSheet, Modal, TouchableWithoutFeedback, SafeAreaView, TextInput, TouchableOpacity } from "react-native";
 import { useDispatch, useSelector } from "react-redux";
 import { addTask, editTask, setTask } from "../features/tasksSlice";
 import { logout } from "../features/authSlice";
 import TaskItems from './../components/TaskItems';
-import {loadFromLocalStorage} from '../features/storage';
+import { loadFromLocalStorage } from '../features/storage';
 import Toast from 'react-native-root-toast';
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useNavigation } from '@react-navigation/native';
@@ -15,40 +15,49 @@ import DatePicker from 'react-native-date-picker'
 
 
 const Task = () => {
-    const [modalVisible, setModalVisible] = useState(false);
-    const [isFilterModal, setIsFilterModal] = useState(false);
+       const [modalVisible, setModalVisible] = useState(false);
+       const [isFilterModal, setIsFilterModal] = useState(false);
        const [isEditMode, setEditMode] = useState(false);
        const [taskToEdit, setTaskToEdit] = useState(null);
-       const [selectedFilter, setSelectedFilter] = useState(false);
+       const [selectedFilter, setSelectedFilter] = useState("all");
        const [title, setTitle] = useState('');
        const [description, setDiscription] = useState('all');
        const navigation = useNavigation();
        const dispatch = useDispatch();
        const [date, setDate] = useState(new Date())
+       const tasks = useSelector(state => state.tasks.tasks);
 
-    const filtersData = [
-        { label: 'All Tasks', value: 'all' },
-        { label: 'Completed Tasks', value: 'completed' },
-        { label: 'Pending Tasks', value: 'pending' },
-    ];
+       const filtersData = [
+              { label: 'All Tasks', value: 'all' },
+              { label: 'Completed Tasks', value: 'completed' },
+              { label: 'Pending Tasks', value: 'pending' },
+       ];
 
-    const loggedInUser = useSelector(state => state.users.loggedInUser);
-    console.log('Logged in User', loggedInUser);
+       const loggedInUser = useSelector(state => state.users.loggedInUser);
+       console.log('Logged in User', loggedInUser);
 
-    useEffect(() => {
-       const fetchTask = async () => {
-           if (loggedInUser) {
-               try {
-                   const userTasks = await AsyncStorage.getItem(`tasks_${loggedInUser.email}`);
-                   const tasks = userTasks ? JSON.parse(userTasks) : [];
-                   dispatch(setTask(tasks));
-               } catch (error) {
-                   console.log("Error fetching tasks: ", error);
-               }
-           }
+       useEffect(() => {
+              const fetchTask = async () => {
+                     if (loggedInUser) {
+                            try {
+                                   const userTasks = await AsyncStorage.getItem(`tasks_${loggedInUser.email}`);
+                                   const tasks = userTasks ? JSON.parse(userTasks) : [];
+                                   dispatch(setTask(tasks));
+                            } catch (error) {
+                                   console.log("Error fetching tasks: ", error);
+                            }
+                     }
+              };
+              fetchTask();
+       }, [loggedInUser, dispatch]);
+
+       const filteredTasks = selectedFilter === 'all'
+              ? tasks
+              : tasks.filter(task => task.status === selectedFilter);
+
+       const handleFilterChange = (filter) => {
+              setSelectedFilter(filter);
        };
-       fetchTask();
-   }, [loggedInUser, dispatch]);
 
        const handelAddTask = () => {
               setModalVisible(true);
@@ -64,48 +73,48 @@ const Task = () => {
               setTitle(task.title);
               setDiscription(task.description);
        }
-       
+
        const handelLogout = () => {
-           Alert.alert(
-             "Logout",
-             "Are you sure you want to logout?",
-             [
-               {
-                 text: "Cancel",
-                 onPress: () => console.log("Cancel Pressed"),
-                 style: "cancel"
-               },
-               {
-                 text: "Yes",
-                 onPress: () => {
-   
-                   logoutApp();
-                 },
-                 style: "default"
-               }
-             ],
-             { cancelable: false }
-           );
-         };
-   
-         const logoutApp = () => {
-   
-           dispatch(logout());
-           dispatch(setTask([]));
-           Alert.alert('Thank You for Using');
-           setTimeout(() => {
-             navigation.navigate('Login');
-           }, 1000);
-         };
+              Alert.alert(
+                     "Logout",
+                     "Are you sure you want to logout?",
+                     [
+                            {
+                                   text: "Cancel",
+                                   onPress: () => console.log("Cancel Pressed"),
+                                   style: "cancel"
+                            },
+                            {
+                                   text: "Yes",
+                                   onPress: () => {
+
+                                          logoutApp();
+                                   },
+                                   style: "default"
+                            }
+                     ],
+                     { cancelable: false }
+              );
+       };
+
+       const logoutApp = () => {
+
+              dispatch(logout());
+              dispatch(setTask([]));
+              Alert.alert('Thank You for Using');
+              setTimeout(() => {
+                     navigation.navigate('Login');
+              }, 1000);
+       };
 
        const handleSaveButton = async () => {
 
               const trimTitle = title.trim();
               const trimDescription = description.trim();
 
-              if(!trimTitle && !trimDescription){
-                Alert.alert('Please fill all the details');
-                return;
+              if (!trimTitle && !trimDescription) {
+                     Alert.alert('Please fill all the details');
+                     return;
               }
 
               // try {
@@ -119,29 +128,30 @@ const Task = () => {
               //           };
               //           dispatch(addTask(newTask));
               //   }
-                if (!loggedInUser) {
+              if (!loggedInUser) {
                      Alert.alert('You need to be logged in to save tasks.');
                      return;
-                 }
+              }
 
-                 try {
+              try {
                      let userTasks = await AsyncStorage.getItem(`tasks_${loggedInUser.email}`);
                      userTasks = userTasks ? JSON.parse(userTasks) : [];
 
                      const newTask = {
-                         id: Math.random().toString(),
-                         title: trimTitle,
-                         description: trimDescription,
+                            id: Math.random().toString(),
+                            title: trimTitle,
+                            description: trimDescription,
+                            status: 'pending',
                      };
 
                      if (isEditMode) {
-                         // Update the task
-                         userTasks = userTasks.map(task =>
-                             task.id === taskToEdit.id ? { ...task, title: trimTitle, description: trimDescription } : task
-                         );
+                            // Update the task
+                            userTasks = userTasks.map(task =>
+                                   task.id === taskToEdit.id ? { ...task, title: trimTitle, description: trimDescription } : task
+                            );
                      } else {
-                         // Add new task
-                         userTasks.push(newTask);
+                            // Add new task
+                            userTasks.push(newTask);
                      }
 
                      // Save updated tasks back to AsyncStorage
@@ -153,14 +163,14 @@ const Task = () => {
 
                      setModalVisible(false);
                      Toast.show(isEditMode ? 'Task Updated Successfully' : 'Task Added Successfully', {
-                         duration: Toast.durations.LONG,
+                            duration: Toast.durations.LONG,
                      });
                      setTitle('');
                      setDiscription('');
-                 } catch (error) {
+              } catch (error) {
                      console.log("Error in saving: ", error);
                      Alert.alert('Error in Saving from our Side, Please try again later!!');
-                 }
+              }
               // } catch (error) {
               //     console.log("Error in saving : ",error);
               //     Alert.alert('Error in Saving from our Side, Please try again later!!')
@@ -170,104 +180,104 @@ const Task = () => {
        };
 
        const handelFilter = () => {
-            setIsFilterModal(false)
+              setIsFilterModal(false)
        }
-  return (
-    <View>
-      <View style={styles.centerdView}>
-                     <Modal
-                            transparent={true}
-                            animationType="slide"
-                            visible={modalVisible}
-                     >
-                            <SafeAreaView style={styles.safeArea}>
-                                   <View style={styles.modalContainer}>
-                                      <View style={{flexDirection: "row", justifyContent: "space-between"}}>
-                                            <Text style={styles.modalTitle}>{isEditMode ? 'Edit Task' : 'Add Task'}</Text>
-                                            <Button title="X" onPress={() => setModalVisible(false)} />
-                                      </View>
-
-                                          <Text style={styles.modalContent}>Title</Text>
-                                          <TextInput
-                                                 style={styles.modalInput}
-                                                 placeholder="Enter Title"
-                                                 value={title}
-                                                 onChangeText={setTitle}
-                                          />
-                                          <Text style={styles.modalContent}>Description</Text>
-                                          <TextInput
-                                                 style={styles.modalInput}
-                                                 placeholder="Enter Description"
-                                                 value={description}
-                                                 onChangeText={setDiscription}
-                                          />
-
-                                          <Button title={isEditMode ? "Update" : "Add Task"} onPress={handleSaveButton} />
-                                   </View>
-                            </SafeAreaView>
-                     </Modal>
-
-                    {/* Filter Modal */}
-                    <TouchableWithoutFeedback onPress={() => setIsFilterModal(false)}>
-                         <View>
-                            
-                         <Modal
-                            transparent={true}
-                            animationType="fade"
-                            visible={isFilterModal}
-                     >
-                            <SafeAreaView style={styles.modalArea}>
-                                   <View style={styles.filterModal}>
-
-                                          <Text style={styles.modalContent}>Filters:</Text>
-                                          
-                                          <Dropdown
-                                                data={filtersData}
-                                                labelField="label"
-                                                valueField="value"
-                                                placeholder="Filters"
-                                                value={selectedFilter}
-                                                onChange={item => {
-                                                    setSelectedFilter(item.value);
-                                                }}
-                                                style={styles.dropdown}
-                                                containerStyle={styles.dropdownContainer}
-                                            />
-                                            
-
-                                          <Button title="Filter" onPress={handelFilter} />
-                                   </View>
-                            </SafeAreaView>
-                     </Modal>
-                         </View>
-                    
-                    </TouchableWithoutFeedback>
-                    
-
-                     <View
-                            style={styles.header}
-                     >         
-                            
-                            <TouchableOpacity
-                                   title="Add Task"
-                                   style={styles.addTask}
-                                   onPress={handelAddTask}
+       return (
+              <View>
+                     <View style={styles.centerdView}>
+                            <Modal
+                                   transparent={true}
+                                   animationType="slide"
+                                   visible={modalVisible}
                             >
-                               
-                                <Icon name="add-circle-outline" size={28} color="#f4511e" />
+                                   <SafeAreaView style={styles.safeArea}>
+                                          <View style={styles.modalContainer}>
+                                                 <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
+                                                        <Text style={styles.modalTitle}>{isEditMode ? 'Edit Task' : 'Add Task'}</Text>
+                                                        <Button title="X" onPress={() => setModalVisible(false)} />
+                                                 </View>
 
- 
-                            </TouchableOpacity>
-                            
+                                                 <Text style={styles.modalContent}>Title</Text>
+                                                 <TextInput
+                                                        style={styles.modalInput}
+                                                        placeholder="Enter Title"
+                                                        value={title}
+                                                        onChangeText={setTitle}
+                                                 />
+                                                 <Text style={styles.modalContent}>Description</Text>
+                                                 <TextInput
+                                                        style={styles.modalInput}
+                                                        placeholder="Enter Description"
+                                                        value={description}
+                                                        onChangeText={setDiscription}
+                                                 />
 
-                            
-                            <TouchableOpacity onPress={() => setIsFilterModal(true)}>
-                                <Icon name="filter-outline" size={25} color="#f4511e" />
-                            </TouchableOpacity>
-                            
+                                                 <Button title={isEditMode ? "Update" : "Add Task"} onPress={handleSaveButton} />
+                                          </View>
+                                   </SafeAreaView>
+                            </Modal>
+
+                            {/* Filter Modal */}
+                            <TouchableWithoutFeedback onPress={() => setIsFilterModal(false)}>
+                                   <View>
+
+                                          <Modal
+                                                 transparent={true}
+                                                 animationType="fade"
+                                                 visible={isFilterModal}
+                                          >
+                                                 <SafeAreaView style={styles.modalArea}>
+                                                        <View style={styles.filterModal}>
+
+                                                               <Text style={styles.modalContent}>Filters:</Text>
+
+                                                               <Dropdown
+                                                                      data={filtersData}
+                                                                      labelField="label"
+                                                                      valueField="value"
+                                                                      placeholder="Filters"
+                                                                      value={selectedFilter}
+                                                                      onChange={item => {
+                                                                             setSelectedFilter(item.value);
+                                                                      }}
+                                                                      style={styles.dropdown}
+                                                                      containerStyle={styles.dropdownContainer}
+                                                               />
 
 
-                            {/* <View style={{marginLeft:40}}>
+                                                               <Button title="Filter" onPress={handelFilter} />
+                                                        </View>
+                                                 </SafeAreaView>
+                                          </Modal>
+                                   </View>
+
+                            </TouchableWithoutFeedback>
+
+
+                            <View
+                                   style={styles.header}
+                            >
+
+                                   <TouchableOpacity
+                                          title="Add Task"
+                                          style={styles.addTask}
+                                          onPress={handelAddTask}
+                                   >
+
+                                          <Icon name="add-circle-outline" size={28} color="#f4511e" />
+
+
+                                   </TouchableOpacity>
+
+
+
+                                   <TouchableOpacity onPress={() => setIsFilterModal(true)}>
+                                          <Icon name="filter-outline" size={25} color="#f4511e" />
+                                   </TouchableOpacity>
+
+
+
+                                   {/* <View style={{marginLeft:40}}>
                              <Button
                                    title="Log Out"
                                    style={{ height: 40 }}
@@ -276,147 +286,147 @@ const Task = () => {
                             </View> */}
 
 
+                            </View>
+
+                            <TaskItems onEditTask={handleEditTask} />
+
+                            {/* <Translation/>      */}
+
                      </View>
-
-                     <TaskItems onEditTask={handleEditTask} />
-
-                     {/* <Translation/>      */}
-
               </View>
-    </View>
-  )
+       )
 }
 
 const styles = StyleSheet.create({
-    safeArea: {
-           flex: 1,
-           backgroundColor: 'rgba(0, 0, 0, 0.5)',
-           justifyContent: 'center',
-           alignItems: 'center',
-    },
-    modalContainer: {
-           width: '80%',
-           backgroundColor: 'white',
-           borderRadius: 10,
-           padding: 20,
-           elevation: 5,
-    },
-    modalInput: {
-           marginBottom: 10,
-           borderWidth: 1,
-           padding: 10,
-    },
-    modalTitle: {
-           fontSize: 24,
-           fontWeight: 'bold',
-           marginBottom: 10,
-    },
-    modalContent: {
-           fontSize: 16,
-           marginBottom: 8,
-    },
-    centerdView: {
-           felx: 1,
-           justifyContent: 'center',
-           alignItems: 'center',
-        // marginTop: 22,
-        backgroundColor: "#fff",
-    },
-    modalView: {
-           margin: 20,
-           backgroundColor: 'white',
-           borderRadius: 20,
-           padding: 35,
-           alignItems: 'center',
-           shadowColor: '#000',
-           shadowOffset: {
-                  width: 0,
-                  height: 2,
-           },
-           shadowOpacity: 0.25,
-           shadowRadius: 4,
-           elevation: 5,
-    },
-    button: {
-           borderRadius: 20,
-           padding: 10,
-           elevation: 2,
-    },
-    buttonOpen: {
-           backgroundColor: '#F194FF',
-    },
-    buttonClose: {
-           backgroundColor: '#2196F3',
-    },
-    textStyle: {
-           color: 'white',
-           fontWeight: 'bold',
-           textAlign: 'center',
-    },
-    modalText: {
-           marginBottom: 15,
-           textAlign: 'center',
-    },
-    addTask:{
-        width: "25%",
-        height: 50,
-        backgroundColor: '#fff',
-        borderRadius: 10,
-        padding: 12,
-        marginTop: 10,
-        marginBottom: 10,
-        alignItems: 'center',
-        justifyContent: 'center',
-    },
-    header:{
-        flexDirection: 'row',
-        width:"100%",
-        justifyContent:'space-between',
-        paddingHorizontal: 20,
-        backgroundColor: "#fff",
-        alignItems:"center"
-    },
-    filter:{
-        width: "25%",
-        height: 50,
-        backgroundColor: '#3498db',
-        borderRadius: 10,
-        padding: 12,
-        marginTop: 10,
-        marginBottom: 10,
-        alignItems: 'center',
-        justifyContent: 'center',
-        color: '#fff'
-    },
-    filterModal:{
-        height:'30%',
-        width: '60%',
-        backgroundColor: 'white',
-        borderRadius: 10,
-        padding: 20,
-        elevation: 5,
-        marginTop: 20,
-    },
-    modalArea:{
-        marginTop: 139,
-        paddingHorizontal: 29,
-        // position: 'absolute',
-        // left: 0,
-        flex: 1,
-        // backgroundColor: 'rgba(0, 0, 0, 0.5)',
-        justifyContent: 'start',
-        alignItems: "flex-end",
-    },
-    dropdown: {
-        fontSize: 10,
-        height: 40,
-        borderColor: '#ccc',
-        borderWidth: 1,
-        borderRadius: 8,
-        paddingHorizontal: 10,
-        width: "100%",
-        marginBottom: 10,
-      },
+       safeArea: {
+              flex: 1,
+              backgroundColor: 'rgba(0, 0, 0, 0.5)',
+              justifyContent: 'center',
+              alignItems: 'center',
+       },
+       modalContainer: {
+              width: '80%',
+              backgroundColor: 'white',
+              borderRadius: 10,
+              padding: 20,
+              elevation: 5,
+       },
+       modalInput: {
+              marginBottom: 10,
+              borderWidth: 1,
+              padding: 10,
+       },
+       modalTitle: {
+              fontSize: 24,
+              fontWeight: 'bold',
+              marginBottom: 10,
+       },
+       modalContent: {
+              fontSize: 16,
+              marginBottom: 8,
+       },
+       centerdView: {
+              felx: 1,
+              justifyContent: 'center',
+              alignItems: 'center',
+              // marginTop: 22,
+              backgroundColor: "#fff",
+       },
+       modalView: {
+              margin: 20,
+              backgroundColor: 'white',
+              borderRadius: 20,
+              padding: 35,
+              alignItems: 'center',
+              shadowColor: '#000',
+              shadowOffset: {
+                     width: 0,
+                     height: 2,
+              },
+              shadowOpacity: 0.25,
+              shadowRadius: 4,
+              elevation: 5,
+       },
+       button: {
+              borderRadius: 20,
+              padding: 10,
+              elevation: 2,
+       },
+       buttonOpen: {
+              backgroundColor: '#F194FF',
+       },
+       buttonClose: {
+              backgroundColor: '#2196F3',
+       },
+       textStyle: {
+              color: 'white',
+              fontWeight: 'bold',
+              textAlign: 'center',
+       },
+       modalText: {
+              marginBottom: 15,
+              textAlign: 'center',
+       },
+       addTask: {
+              width: "25%",
+              height: 50,
+              backgroundColor: '#fff',
+              borderRadius: 10,
+              padding: 12,
+              marginTop: 10,
+              marginBottom: 10,
+              alignItems: 'center',
+              justifyContent: 'center',
+       },
+       header: {
+              flexDirection: 'row',
+              width: "100%",
+              justifyContent: 'space-between',
+              paddingHorizontal: 20,
+              backgroundColor: "#fff",
+              alignItems: "center"
+       },
+       filter: {
+              width: "25%",
+              height: 50,
+              backgroundColor: '#3498db',
+              borderRadius: 10,
+              padding: 12,
+              marginTop: 10,
+              marginBottom: 10,
+              alignItems: 'center',
+              justifyContent: 'center',
+              color: '#fff'
+       },
+       filterModal: {
+              height: '30%',
+              width: '60%',
+              backgroundColor: 'white',
+              borderRadius: 10,
+              padding: 20,
+              elevation: 5,
+              marginTop: 20,
+       },
+       modalArea: {
+              marginTop: 139,
+              paddingHorizontal: 29,
+              // position: 'absolute',
+              // left: 0,
+              flex: 1,
+              // backgroundColor: 'rgba(0, 0, 0, 0.5)',
+              justifyContent: 'start',
+              alignItems: "flex-end",
+       },
+       dropdown: {
+              fontSize: 10,
+              height: 40,
+              borderColor: '#ccc',
+              borderWidth: 1,
+              borderRadius: 8,
+              paddingHorizontal: 10,
+              width: "100%",
+              marginBottom: 10,
+       },
 })
 
 export default Task
