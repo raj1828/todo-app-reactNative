@@ -47,8 +47,8 @@ const TaskItems = ({ onEditTask }) => {
 
 const styles = StyleSheet.create({
        mainContainer: {
-              flexDirection: 'row',
-              flexWrap: 'wrap',
+              flexDirection: 'column',
+              // flexWrap: 'wrap',
               justifyContent: 'space-between',
               padding: 10,
        },
