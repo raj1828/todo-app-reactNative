@@ -1,130 +1,113 @@
-import React, { useState } from 'react';
-import { View, Text, TextInput, StyleSheet, Button, Alert, ScrollView } from 'react-native';
-import {fetchTranslations} from '../features/storage';
-import { Dropdown } from "react-native-element-dropdown"
-import Loader from "../features/Loader"
-import {languages} from "../features/Countries"
+import React, { useState, useEffect } from 'react';
+import { View, Text, FlatList, ActivityIndicator, StyleSheet, Alert } from 'react-native';
+import { fetchTranslations } from '../features/storage';
+import Loader from "../features/Loader";
 
+export default function Translation() {
+       const [newsData, setNewsData] = useState([]);
+       const [isLoading, setIsLoading] = useState(false);
+       const [isFetchingMore, setIsFetchingMore] = useState(false);
+       const [page, setPage] = useState(1); // Current page number for pagination
 
+       // Fetch initial data on component mount
+       useEffect(() => {
+              loadNews();
+       }, []);
 
-const Translation = () => {
-   
-  const [inputText, setInputText] = useState('');
-  const [translatedText, setTranslatedText] = useState('');
-  const [selectedLanguage, setSelectedLanguage] = useState('en-GB');
-  const [isLoading, setIsLoading] = useState(false);
-  const [matches, setMatches] = useState('');
+       const loadNews = async (pageNumber = 1) => {
+              try {
+                     // Show loading spinner for the initial load, else show bottom loading
+                     pageNumber === 1 ? setIsLoading(true) : setIsFetchingMore(true);
 
+                     const articles = await fetchTranslations('bitcoin', pageNumber);
 
-  const handleTranslate = async  () => {
-    setTranslatedText('');
-    setMatches('')
-    setIsLoading(true);
-    console.log(selectedLanguage)
+                     if (articles.length > 0) {
+                            // If page number is 1, set the news data to response; otherwise, append the new articles
+                            setNewsData(prevData => pageNumber === 1 ? articles : [...prevData, ...articles]);
+                            setPage(pageNumber + 1); // Increment page number
+                     } else {
+                            Alert.alert('No more articles found');
+                     }
+              } catch (error) {
+                     console.log('Error in loading news:', error);
+              } finally {
+                     setIsLoading(false);
+                     setIsFetchingMore(false);
+              }
+       };
 
-    try {
-        
-        const translatedData = await fetchTranslations(inputText, selectedLanguage);
-        console.log(translatedData);
-        setTranslatedText(translatedData[0].text);
-        setMatches(translatedData[0].matches);
-        if(translatedText == null ){
-          setTranslatedText('API dont have this translation in this Language')
-          setMatches('');
-        }
-        setIsLoading(false)
+       const loadMoreNews = () => {
+              if (!isFetchingMore) {
+                     loadNews(page);
+              }
+       };
 
-    } catch (error) {
-        console.log(error);
-        Alert.alert('Error in Fetching translations')
-    }
-    
-  };
+       const renderItem = ({ item }) => (
+              <View style={styles.newsItem}>
+                     <Text style={styles.newsTitle}>{item.title}</Text>
+                     <Text style={styles.newsDescription}>{item.description}</Text>
+              </View>
+       );
 
-  return (
-    <View style={styles.container}>
-        <ScrollView contentContainerStyle= {styles.scrollContainer}>
-        <Text style={styles.title}>Translation</Text>
-      <TextInput
-        style={styles.translationText}
-        placeholder="Enter Translation Text"
-        value={inputText}
-        onChangeText={setInputText}
-        multiline={true}
-        numberOfLines={5}
-      />
-      <Dropdown
-                            data={languages}
-                            labelField="label"
-                            valueField="value"
-                            placeholder="Select a language"
-                            value={selectedLanguage}
-                            onChange={item => {
-                                setSelectedLanguage(item.value);
-                            }}
-                            style={styles.dropdown}
-                            containerStyle={styles.dropdownContainer}
-                        />
-      <View style={styles.buttonContainer}>
-        <Button title="Translate" onPress={handleTranslate} color="#4CAF50" />
-      </View>
+       const renderFooter = () => {
+              return isFetchingMore ? (
+                     <View style={styles.footer}>
+                            <ActivityIndicator size="small" color="#0000ff" />
+                     </View>
+              ) : null;
+       };
 
-      {
-        isLoading ? ( <Loader />  ) : null 
-      }
-
-      {translatedText ? (
-        <View>
-          <Text style={styles.translateText}>Translation: {translatedText}</Text>
-          <Text style={styles.translateText}>Match Result: {matches * 100}%</Text>
-        </View>
-      ) : null}
-        </ScrollView>
-      
-    </View>
-  );
-};
+       return (
+              <View style={styles.container}>
+                     <Text style={styles.title}>News Feed</Text>
+                     {isLoading ? (
+                            <Loader />
+                     ) : (
+                            <FlatList
+                                   data={newsData}
+                                   renderItem={renderItem}
+                                   keyExtractor={(item, index) => index.toString()}
+                                   onEndReached={loadMoreNews}
+                                   onEndReachedThreshold={0.5} // Fetch more when the user is halfway through the list
+                                   ListFooterComponent={renderFooter}
+                            />
+                     )}
+              </View>
+       );
+}
 
 const styles = StyleSheet.create({
-  container: {
-    marginTop:10,
-    width: '100%', // Set width to 100% for proper layout
-        padding: 20,
-        marginBottom: 200,
-  },
-  title:{
-    fontSize:24,
-    fontWeight:'bold',
-    marginBottom:10
-  },
-  translationText:{
-    borderWidth:1,
-    borderColor:'#ccc',
-    padding:10,
-    marginBottom:10,
-    width: 380
-  },
-  translateText:{
-    fontSize:18,
-    fontWeight:'bold',
-    marginBottom:10
-  },
-  dropdown: {
-    height: 40,
-    borderColor: '#ccc',
-    borderWidth: 1,
-    borderRadius: 8,
-    paddingHorizontal: 10,
-    width: 380,
-    marginBottom: 20,
-  },
-  scrollContainer:{
-    width: 400
-    // flex: 1,
-    // padding: 10,
-    // flexGrow: 1,
-    // justifyContent: 'flex-start'
-}
+       container: {
+              flex: 1,
+              padding: 16,
+              backgroundColor: '#f5f5f5'
+       },
+       title: {
+              fontSize: 24,
+              fontWeight: 'bold',
+              marginBottom: 16,
+       },
+       newsItem: {
+              padding: 16,
+              backgroundColor: '#fff',
+              marginBottom: 8,
+              borderRadius: 8,
+              shadowColor: '#000',
+              shadowOpacity: 0.1,
+              shadowOffset: { width: 0, height: 1 },
+              shadowRadius: 8,
+              elevation: 2,
+       },
+       newsTitle: {
+              fontSize: 18,
+              fontWeight: 'bold',
+       },
+       newsDescription: {
+              marginTop: 8,
+              fontSize: 14,
+              color: '#666',
+       },
+       footer: {
+              paddingVertical: 20,
+       },
 });
-
-export default Translation;

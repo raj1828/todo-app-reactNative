@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { Text, View, StyleSheet, FlatList, TouchableOpacity } from 'react-native';
+import { Text, View, StyleSheet, FlatList, TouchableOpacity, Alert } from 'react-native';
 import { useSelector, useDispatch } from 'react-redux';
 import { deleteTask } from '../features/tasksSlice';
 import Toast from 'react-native-root-toast';
@@ -76,7 +76,11 @@ const TaskItems = ({ onEditTask, functionProps, selectedFilter, name }) => {
                             </TouchableOpacity>
                             <TouchableOpacity
                                    onPress={() => {
-                                          dispatch(deleteTask(item.id));
+                                          Alert.alert("Logout", "Are you sure you want to Delete?", [
+                                                 { text: "Yes", onPress: () => dispatch(deleteTask(item.id)) },
+                                                 { text: "No", onPress: () => console.log("Cancel Pressed") }
+                                          ]);
+
                                           Toast.show('Task Deleted Successfully.', {
                                                  duration: Toast.durations.LONG,
                                           });
@@ -98,7 +102,7 @@ const TaskItems = ({ onEditTask, functionProps, selectedFilter, name }) => {
 
        return (
               <FlatList
-                     data={filteredTasks}
+                     data={[...filteredTasks].reverse()}
                      renderItem={renderTaskItems}
                      keyExtractor={(item) => item.id.toString()}
                      contentContainerStyle={styles.mainContainer}

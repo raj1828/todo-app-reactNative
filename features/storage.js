@@ -25,28 +25,25 @@ export const loadFromLocalStorage = async () => {
        }
 }
 
-export const fetchTranslations = async (inputText, language) => {
+export const fetchNews = async () => {
        try {
-              console.log(inputText);
-              console.log(language);
-              const data = await fetch(`https://api.mymemory.translated.net/get?q=${inputText}&langpair=en-GB|${language}`)
-              const response = await data.json();
-              
-              const result = [];
-              const translation = response.responseData.translatedText
-              const match = response.responseData.match
-              result.push({ text: translation, matches: match });
-              return result;
+              const response = await fetch(
+                     'https://newsapi.org/v2/everything?q=bitcoin&apiKey=c61220174ade46ccb8337e6219431c20'
+              );
+              const data = await response.json();
+              return data.articles; // Return the articles from the response
        } catch (error) {
-              console.log('Error in Traslating through API', error);
+              console.error('Error fetching news:', error);
+              return []; // Return an empty array in case of error
        }
 };
 
+
 export const saveUserToLocalStorage = async (users) => {
        try {
-              
+
               const plainUsers = JSON.parse(JSON.stringify(users));
-              const jsonValue = JSON.stringify(plainUsers); 
+              const jsonValue = JSON.stringify(plainUsers);
               await AsyncStorage.setItem(storeUsers, jsonValue);
               console.log('User saved to AsyncStorage:', jsonValue);
        } catch (error) {

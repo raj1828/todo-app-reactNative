@@ -2,6 +2,7 @@ import { StyleSheet, Text, View, TouchableOpacity } from 'react-native'
 import React, { useState } from 'react'
 import Task from './Task';
 import Translation from './Translation';
+import News from './News';
 import { useDispatch, useSelector } from "react-redux";
 
 
@@ -59,7 +60,7 @@ export default function SwitchApp() {
                                    </View>
                             ) : (
                                    <View>
-                                          <Translation />
+                                          <News />
                                    </View>
                             )
                      }
