@@ -8,44 +8,35 @@ import { editTask } from '../features/tasksSlice';
 
 
 const TaskItems = ({ onEditTask, functionProps, selectedFilter, name }) => {
-       console.log("jnj",name)
-       console.log("select",selectedFilter)
        const tasks = useSelector(state => state.tasks);
-       console.log(tasks.length);
        const totalTask = tasks.length;
-       const [mark, setMark] = useState('pending')
+       const [mark, setMark] = useState('pending');
        const dispatch = useDispatch();
-       const [progress, setProgress] = useState(0)
-       console.log("Progress: ", progress)
+       const [progress, setProgress] = useState(0);
 
-       // progress
-       const completedTask = tasks.filter(task => task.status === 'completed');
-       const prndingTasks = tasks.filter(task => task.status === 'completed');
-       
+       const completedTasks = tasks.filter(task => task.status === 'completed');
+
+       // Filter tasks based on selectedFilter
+       const filteredTasks = tasks.filter(task =>
+              selectedFilter === 'all' ? true : task.status === selectedFilter
+       );
 
        useEffect(() => {
-              const progressRes = totalTask === 0 ? 0 : (completedTask.length / totalTask);
+              const progressRes = totalTask === 0 ? 0 : (completedTasks.length / totalTask);
               setProgress(progressRes);
               functionProps(progressRes);
-       }, [tasks])
-       
-       
+       }, [tasks]);
 
        const toggleStatus = (task) => {
-              const id = task.id;
-              console.log(id)
               const updatedTask = { ...task, status: task.status === 'completed' ? 'pending' : 'completed' };
-              setMark(updatedTask.status === 'completed'? 'completed' : 'pending');
+              setMark(updatedTask.status === 'completed' ? 'completed' : 'pending');
               dispatch(editTask(updatedTask));
-              console.log(updatedTask)
-              console.log("Completed Task:", tasks[task])   
-              
-
        };
 
        const renderTaskItems = ({ item }) => (
-              <View style={{width: '48%',
-                     backgroundColor: item.status =='completed' ? 'seagreen' : '#f4511e',
+              <View style={{
+                     width: '48%',
+                     backgroundColor: item.status === 'completed' ? 'seagreen' : '#f4511e',
                      padding: 15,
                      borderRadius: 10,
                      marginBottom: 15,
@@ -54,7 +45,8 @@ const TaskItems = ({ onEditTask, functionProps, selectedFilter, name }) => {
                      shadowOpacity: 0.2,
                      shadowOffset: { width: 0, height: 2 },
                      shadowRadius: 4,
-                     elevation: 5,}}>
+                     elevation: 5,
+              }}>
                      <Text style={styles.heading}>Note:</Text>
                      <Text style={styles.title}>{item.title}</Text>
                      <Text style={styles.desc}>{item.description}</Text>
@@ -72,12 +64,14 @@ const TaskItems = ({ onEditTask, functionProps, selectedFilter, name }) => {
                      </View>
 
                      <View style={styles.actionBtn}>
-                            <TouchableOpacity onPress={() => onEditTask(item)} style={{backgroundColor: item.status == 'completed' ? '#62AB37' :'#dd2c00',
-              padding: 10,
-              borderRadius: 5,
-              alignItems: 'center',
-              justifyContent: 'center',
-              width: '45%',}}>
+                            <TouchableOpacity onPress={() => onEditTask(item)} style={{
+                                   backgroundColor: item.status === 'completed' ? '#62AB37' : '#dd2c00',
+                                   padding: 10,
+                                   borderRadius: 5,
+                                   alignItems: 'center',
+                                   justifyContent: 'center',
+                                   width: '45%',
+                            }}>
                                    <Icon name="create-outline" size={25} color="#fff" />
                             </TouchableOpacity>
                             <TouchableOpacity
@@ -87,12 +81,14 @@ const TaskItems = ({ onEditTask, functionProps, selectedFilter, name }) => {
                                                  duration: Toast.durations.LONG,
                                           });
                                    }}
-                                   style={{backgroundColor: item.status == 'completed' ? '#62AB37' :'#dd2c00',
+                                   style={{
+                                          backgroundColor: item.status === 'completed' ? '#62AB37' : '#dd2c00',
                                           padding: 10,
                                           borderRadius: 5,
                                           alignItems: 'center',
                                           justifyContent: 'center',
-                                          width: '45%',}}
+                                          width: '45%',
+                                   }}
                             >
                                    <Icon name="trash-outline" size={25} color="#fff" />
                             </TouchableOpacity>
@@ -102,8 +98,7 @@ const TaskItems = ({ onEditTask, functionProps, selectedFilter, name }) => {
 
        return (
               <FlatList
-                     data={tasks}
-                     //data={selectedFilter === 'completed' ? tasks.status === 'completed' : tasks.status === 'pending'}
+                     data={filteredTasks}
                      renderItem={renderTaskItems}
                      keyExtractor={(item) => item.id.toString()}
                      contentContainerStyle={styles.mainContainer}
@@ -112,6 +107,7 @@ const TaskItems = ({ onEditTask, functionProps, selectedFilter, name }) => {
               />
        );
 }
+
 
 const styles = StyleSheet.create({
        mainContainer: {
@@ -165,7 +161,7 @@ const styles = StyleSheet.create({
               // justifyContent: 'center',
               // width: '45%',
        },
-       statusView:{
+       statusView: {
               flexDirection: 'row',
               justifyContent: 'space-between',
               marginBottom: 10,

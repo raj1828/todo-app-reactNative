@@ -29,7 +29,7 @@ const Task = () => {
        const tasks = useSelector(state => state.tasks.tasks);
        const [progress, setProgress] = useState(0)
 
-       const handelProgressChange = (progressRes, ) => {
+       const handelProgressChange = (progressRes,) => {
               setProgress(progressRes);
        };
 
@@ -60,7 +60,7 @@ const Task = () => {
               fetchTask();
        }, [loggedInUser, dispatch]);
 
-       
+
 
        const handelFilter = () => {
               setIsFilterModal(false)
@@ -120,22 +120,11 @@ const Task = () => {
               const trimTitle = title.trim();
               const trimDescription = description.trim();
 
-              if (!trimTitle && !trimDescription) {
-                     Alert.alert('Please fill all the details');
+              if (!trimTitle) {
+                     Alert.alert('Please add task title');
                      return;
               }
 
-              // try {
-              //   if (isEditMode) {
-              //     dispatch(editTask({ id: taskToEdit.id, title, description }));
-              //   } else {
-              //           const newTask = {
-              //                 id: Math.random().toString(),
-              //                 title: title,
-              //                 description: description,
-              //           };
-              //           dispatch(addTask(newTask));
-              //   }
               if (!loggedInUser) {
                      Alert.alert('You need to be logged in to save tasks.');
                      return;
@@ -250,7 +239,7 @@ const Task = () => {
                                                                />
 
 
-                                                               <Button title="Filter" onPress={handelFilter} />
+                                                               <Button title="Close" onPress={handelFilter} />
                                                         </View>
                                                  </SafeAreaView>
                                           </Modal>
@@ -292,10 +281,10 @@ const Task = () => {
 
 
                             </View>
-                            <ProgressBar style={styles.progressBar} progress={progress}  width={350} height={20} color="seagreen" borderWidth={2} borderColor="#ddd"
-                borderRadius={5} />
+                            <ProgressBar style={styles.progressBar} progress={progress} width={350} height={20} color="seagreen" borderWidth={2} borderColor="#ddd"
+                                   borderRadius={5} />
 
-                            <TaskItems onEditTask={handleEditTask} functionProps={handelProgressChange} selectedFilter={selectedFilter} name="s"/>
+                            <TaskItems onEditTask={handleEditTask} functionProps={handelProgressChange} selectedFilter={selectedFilter} name="s" />
 
                             {/* <Translation/>      */}
 
@@ -434,10 +423,10 @@ const styles = StyleSheet.create({
               width: "100%",
               marginBottom: 10,
        },
-       progressBar:{
-              borderRadius: 5, 
+       progressBar: {
+              borderRadius: 5,
               overflow: 'hidden',
-              marginBottom:8
+              marginBottom: 8
        }
 })
 
