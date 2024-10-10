@@ -20,7 +20,7 @@ const TaskItems = ({ onEditTask, functionProps, selectedFilter, name }) => {
 
        // progress
        const completedTask = tasks.filter(task => task.status === 'completed');
-       const prndingTasks = tasks.filter(task => task.status === 'pending');
+       const prndingTasks = tasks.filter(task => task.status === 'completed');
        
 
        useEffect(() => {
@@ -103,6 +103,7 @@ const TaskItems = ({ onEditTask, functionProps, selectedFilter, name }) => {
        return (
               <FlatList
                      data={tasks}
+                     //data={selectedFilter === 'completed' ? tasks.status === 'completed' : tasks.status === 'pending'}
                      renderItem={renderTaskItems}
                      keyExtractor={(item) => item.id.toString()}
                      contentContainerStyle={styles.mainContainer}
