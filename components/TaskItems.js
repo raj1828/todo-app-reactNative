@@ -7,7 +7,9 @@ import Icon from "react-native-vector-icons/Ionicons";
 import { editTask } from '../features/tasksSlice';
 
 
-const TaskItems = ({ onEditTask, functionProps }) => {
+const TaskItems = ({ onEditTask, functionProps, selectedFilter, name }) => {
+       console.log("jnj",name)
+       console.log("select",selectedFilter)
        const tasks = useSelector(state => state.tasks);
        console.log(tasks.length);
        const totalTask = tasks.length;
@@ -18,6 +20,7 @@ const TaskItems = ({ onEditTask, functionProps }) => {
 
        // progress
        const completedTask = tasks.filter(task => task.status === 'completed');
+       const prndingTasks = tasks.filter(task => task.status === 'pending');
        
 
        useEffect(() => {

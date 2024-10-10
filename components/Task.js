@@ -29,7 +29,7 @@ const Task = () => {
        const tasks = useSelector(state => state.tasks.tasks);
        const [progress, setProgress] = useState(0)
 
-       const handelProgressChange = (progressRes) => {
+       const handelProgressChange = (progressRes, ) => {
               setProgress(progressRes);
        };
 
@@ -60,13 +60,12 @@ const Task = () => {
               fetchTask();
        }, [loggedInUser, dispatch]);
 
-       const filteredTasks = selectedFilter === 'all'
-              ? tasks
-              : tasks.filter(task => task.status === selectedFilter);
+       
 
-       const handleFilterChange = (filter) => {
-              setSelectedFilter(filter);
-       };
+       const handelFilter = () => {
+              setIsFilterModal(false)
+              console.log(selectedFilter)
+       }
 
        const handelAddTask = () => {
               setModalVisible(true);
@@ -188,9 +187,6 @@ const Task = () => {
 
        };
 
-       const handelFilter = () => {
-              setIsFilterModal(false)
-       }
        return (
               <View>
                      <View style={styles.centerdView}>
@@ -299,7 +295,7 @@ const Task = () => {
                             <ProgressBar style={styles.progressBar} progress={progress}  width={350} height={20} color="seagreen" borderWidth={2} borderColor="#ddd"
                 borderRadius={5} />
 
-                            <TaskItems onEditTask={handleEditTask} functionProps={handelProgressChange}/>
+                            <TaskItems onEditTask={handleEditTask} functionProps={handelProgressChange} selectedFilter={selectedFilter} name="s"/>
 
                             {/* <Translation/>      */}
 
