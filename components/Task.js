@@ -11,6 +11,7 @@ import { useNavigation } from '@react-navigation/native';
 import Icon from "react-native-vector-icons/Ionicons";
 import { Dropdown } from "react-native-element-dropdown"
 import DatePicker from 'react-native-date-picker'
+import ProgressBar from 'react-native-progress/Bar';
 
 
 
@@ -26,6 +27,12 @@ const Task = () => {
        const dispatch = useDispatch();
        const [date, setDate] = useState(new Date())
        const tasks = useSelector(state => state.tasks.tasks);
+       const [progress, setProgress] = useState(0)
+
+       const handelProgressChange = (progressRes) => {
+              setProgress(progressRes);
+       };
+
 
        const filtersData = [
               { label: 'All Tasks', value: 'all' },
@@ -42,6 +49,8 @@ const Task = () => {
                             try {
                                    const userTasks = await AsyncStorage.getItem(`tasks_${loggedInUser.email}`);
                                    const tasks = userTasks ? JSON.parse(userTasks) : [];
+                                   // console.log(`Tasks: ${userTasks}`)
+
                                    dispatch(setTask(tasks));
                             } catch (error) {
                                    console.log("Error fetching tasks: ", error);
@@ -160,7 +169,7 @@ const Task = () => {
 
                      dispatch(setTask(userTasks));
 
-
+                     console.log(userTasks)
                      setModalVisible(false);
                      Toast.show(isEditMode ? 'Task Updated Successfully' : 'Task Added Successfully', {
                             duration: Toast.durations.LONG,
@@ -287,8 +296,10 @@ const Task = () => {
 
 
                             </View>
+                            <ProgressBar style={styles.progressBar} progress={progress}  width={350} height={20} color="seagreen" borderWidth={2} borderColor="#ddd"
+                borderRadius={5} />
 
-                            <TaskItems onEditTask={handleEditTask} />
+                            <TaskItems onEditTask={handleEditTask} functionProps={handelProgressChange}/>
 
                             {/* <Translation/>      */}
 
@@ -427,6 +438,11 @@ const styles = StyleSheet.create({
               width: "100%",
               marginBottom: 10,
        },
+       progressBar:{
+              borderRadius: 5, 
+              overflow: 'hidden',
+              marginBottom:8
+       }
 })
 
 export default Task

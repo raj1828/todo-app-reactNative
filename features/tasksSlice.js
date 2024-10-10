@@ -12,6 +12,8 @@ const tasksSlice = createSlice({
               },
               editTask: (state, action) => {
                      const index = state.findIndex(task => task.id === action.payload.id);
+                     console.log("action is ",action);
+                     console.log("index",index);
                      if (index !== -1) {
                             state[index] = action.payload;
                             saveToLocalStorage(state);
