@@ -25,7 +25,7 @@ export const loadFromLocalStorage = async () => {
        }
 }
 
-export const fetchNews = async () => {
+export const fetchNews = async (page = 1) => {
        try {
               const response = await fetch(
                      'https://newsapi.org/v2/everything?q=bitcoin&apiKey=c61220174ade46ccb8337e6219431c20'
