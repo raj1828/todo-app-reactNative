@@ -49,7 +49,7 @@ export default function SwitchApp() {
                                           setSelectedTab(1)
                                    }}
                             >
-                                   <Text style={{ color: selectedTab == 1 ? '#dd2c00' : '#fff', fontSize: 18, fontWeight: 700 }}>Translation</Text>
+                                   <Text style={{ color: selectedTab == 1 ? '#dd2c00' : '#fff', fontSize: 18, fontWeight: 700 }}>News Updates</Text>
                             </TouchableOpacity>
                      </View>
 

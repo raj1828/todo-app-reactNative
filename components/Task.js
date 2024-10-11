@@ -395,7 +395,7 @@ const styles = StyleSheet.create({
               color: '#fff'
        },
        filterModal: {
-              height: '30%',
+              height: '20%',
               width: '60%',
               backgroundColor: 'white',
               borderRadius: 10,

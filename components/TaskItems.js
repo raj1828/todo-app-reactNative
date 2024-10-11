@@ -33,10 +33,10 @@ const TaskItems = ({ onEditTask, functionProps, selectedFilter, name }) => {
               dispatch(editTask(updatedTask));
        };
 
-       const renderTaskItems = ({ item }) => (
+       const renderTaskItems = ({ item, index }) => (
               <View style={{
                      width: '48%',
-                     backgroundColor: item.status === 'completed' ? 'seagreen' : '#f4511e',
+                     backgroundColor: index === 0 ? '#0096FF' : (item.status === 'completed' ? 'seagreen' : '#f4511e'),
                      padding: 15,
                      borderRadius: 10,
                      marginBottom: 15,
@@ -63,7 +63,7 @@ const TaskItems = ({ onEditTask, functionProps, selectedFilter, name }) => {
                             </TouchableOpacity>
                      </View>
 
-                     <View style={styles.actionBtn}>
+                     <View style={styles.actionBtn}>    
                             <TouchableOpacity onPress={() => onEditTask(item)} style={{
                                    backgroundColor: item.status === 'completed' ? '#62AB37' : '#dd2c00',
                                    padding: 10,

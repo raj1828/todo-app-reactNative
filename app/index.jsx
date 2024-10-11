@@ -8,20 +8,43 @@ import {
   Modal,
   SafeAreaView,
   TextInput,
+  BackHandler, 
 } from "react-native";
-import { Provider, useDispatch, useSelector } from "react-redux";
-import { addTask, editTask, setTask } from "../features/tasksSlice";
-import TaskItems from "./../components/TaskItems";
-import { loadFromLocalStorage } from "../features/storage";
-import Translation from "../components/Translation";
-import Toast from "react-native-root-toast";
-import AsyncStorage from "@react-native-async-storage/async-storage";
-import { useNavigation } from "@react-navigation/native";
-import SwitchApp from "../components/SwitchApp";
-import Task from "../components/Task";
+import { Provider } from "react-redux";
 import store from "../store";
+import SwitchApp from "../components/SwitchApp";
+import { useNavigation } from "expo-router";
 
 export default function Index() {
+  const navigation = useNavigation(); 
+
+  useEffect(() => {
+    const backAction = () => {
+      Alert.alert("Logout", "Do you want to logout?", [
+        {
+          text: "Cancel",
+          onPress: () => null,
+          style: "cancel",
+        },
+        {
+          text: "OK",
+          onPress: () => {
+            //  AsyncStorage.clear(); 
+            navigation.navigate('Login');
+          },
+        },
+      ]);
+      return true; // Prevent default back action
+    };
+
+    const backHandler = BackHandler.addEventListener(
+      "hardwareBackPress",
+      backAction
+    );
+
+    return () => backHandler.remove(); // Cleanup on unmount
+  }, [navigation]);
+
   return (
     <Provider store={store}>
       <SafeAreaView style={styles.container}>
@@ -37,6 +60,5 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: "#f7f7f7",
-    //       paddingTop: 50,
   },
 });

@@ -31,7 +31,7 @@ export const fetchNews = async (page = 1, limit = 10) => {
                `https://newsapi.org/v2/everything?q=bitcoin&apiKey=c61220174ade46ccb8337e6219431c20&page=${page}&pageSize=${limit}`
            );
            const data = await response.json();
-       //     console.log(data); // Log the response to check structure
+       //     console.log(data); 
            return data.articles; 
        } catch (error) {
            console.error('Error fetching news:', error);
