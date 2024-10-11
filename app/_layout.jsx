@@ -7,6 +7,7 @@ import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { TouchableOpacity, Alert } from "react-native";
 import Icon from "react-native-vector-icons/Ionicons";
+import NewsDetails from "../components/NewsDetails";
 
 const Stack = createNativeStackNavigator();
 
@@ -23,8 +24,14 @@ export default function RootLayout() {
                 <TouchableOpacity
                   onPress={() => {
                     Alert.alert("Logout", "Are you sure you want to logout?", [
-                      { text: "Yes", onPress: () => navigation.navigate('Login') },
-                      { text: "No", onPress: () => console.log("Cancel Pressed") }
+                      {
+                        text: "Yes",
+                        onPress: () => navigation.navigate("Login"),
+                      },
+                      {
+                        text: "No",
+                        onPress: () => console.log("Cancel Pressed"),
+                      },
                     ]);
                   }}
                 >
@@ -32,7 +39,7 @@ export default function RootLayout() {
                 </TouchableOpacity>
               ),
               headerStyle: {
-                backgroundColor: "#f4511e"
+                backgroundColor: "#f4511e",
               },
               headerBackVisible: false,
             })}
@@ -47,6 +54,25 @@ export default function RootLayout() {
             name="Register"
             options={{ headerShown: false }}
             component={Register}
+          />
+          <Stack.Screen
+            name="NewsDetails"
+            component={NewsDetails}
+
+            options={({ navigation }) => ({
+              title: "NewsDetails",
+              headerLeft: () => (
+                <TouchableOpacity
+                  onPress={() => navigation.navigate('Tasks')}
+                >
+                  <Icon name="chevron-back-outline" size={25} color="#fff" />
+                </TouchableOpacity>
+              ),
+              headerStyle: {
+                backgroundColor: "#f4511e",
+              },
+              headerBackVisible: false,
+            })}
           />
         </Stack.Navigator>
       </NavigationContainer>

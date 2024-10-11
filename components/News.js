@@ -1,6 +1,7 @@
-import { StyleSheet, Text, View, FlatList, ActivityIndicator, Image, Alert } from 'react-native';
+import { StyleSheet, Text, View, FlatList, ActivityIndicator, Image, Alert, TouchableOpacity } from 'react-native';
 import React, { useEffect, useState } from 'react';
 import { fetchNews } from '../features/storage';
+import { useNavigation } from 'expo-router';
 
 const News = () => {
     const [newsArticles, setNewsArticles] = useState([]);
@@ -8,6 +9,7 @@ const News = () => {
     const [loadingMore, setLoadingMore] = useState(false);
     const [page, setPage] = useState(1);
     const limit = 20; // Number of articles to fetch at once
+    const navigation = useNavigation();
 
     useEffect(() => {
         const getNews = async () => {
@@ -26,7 +28,7 @@ const News = () => {
               return [...articles]
         }
         setLoadingMore(true);
-        const nextPage = page + 1 || [];
+        const nextPage = page + 1 ;
         const articles = await fetchNews(nextPage, limit);
         
         
@@ -38,24 +40,27 @@ const News = () => {
     };
 
     const renderItem = ({ item }) => {
-        return (
-            <View style={styles.articleContainer}>
-                <View style={styles.image}>
-                    <Image
-                        width={100}
-                        height={100}
-                        source={{ uri: item.urlToImage }}
-                    />
-                </View>
-                <View style={styles.content}>
-                    <Text style={styles.author}>{item.author}</Text>
-                    <Text style={styles.title}>{item.title}</Text>
-                    <Text>{item.description}</Text>
-                    <Text style={styles.date}>{item.publishedAt}</Text>
-                </View>
-            </View>
-        );
-    };
+       return (
+           <View style={styles.articleContainer}>
+               <View style={styles.image}>
+                   <Image
+                       width={100}
+                       height={100}
+                       source={{ uri: item.urlToImage }}
+                   />
+               </View>
+               <TouchableOpacity onPress={() => navigation.navigate("NewsDetails", { newsItem: item })}>
+                   <View style={styles.content}>
+                       <Text style={styles.author}>{item.author}</Text>
+                       <Text style={styles.title}>{item.title}</Text>
+                       <Text style={{width:300}}>{item.description}</Text>
+                       <Text style={styles.date}>{item.publishedAt}</Text>
+                   </View>
+               </TouchableOpacity>
+           </View>
+       );
+   };
+   
 
     const handleLoadMore = () => {
         loadMoreArticles();
@@ -93,6 +98,7 @@ const styles = StyleSheet.create({
         borderBottomWidth: 1,
         borderBottomColor: '#ccc',
         alignItems: 'flex-start',
+        paddingRight: 20
     },
     image: {
         width: 100,
@@ -102,6 +108,7 @@ const styles = StyleSheet.create({
         justifyContent: 'center'
     },
     content: {
+       // padding:20,
         marginLeft: 10,
         flex: 1,
         justifyContent: 'flex-start',
@@ -115,6 +122,7 @@ const styles = StyleSheet.create({
         fontSize: 18,
         fontWeight: 'bold',
         marginBottom: 4,
+        width:300,
     },
     date: {
         fontSize: 12,

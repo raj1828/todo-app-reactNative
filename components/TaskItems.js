@@ -46,8 +46,9 @@ const TaskItems = ({ onEditTask, functionProps, selectedFilter, name }) => {
                      shadowOffset: { width: 0, height: 2 },
                      shadowRadius: 4,
                      elevation: 5,
+                     
               }}>
-                     <Text style={styles.heading}>Note:</Text>
+                     <Text style={styles.heading}>{index === 0 ? "New Note:" : "Note:"}</Text>
                      <Text style={styles.title}>{item.title}</Text>
                      <Text style={styles.desc}>{item.description}</Text>
                      <View style={styles.statusView}>
@@ -76,7 +77,7 @@ const TaskItems = ({ onEditTask, functionProps, selectedFilter, name }) => {
                             </TouchableOpacity>
                             <TouchableOpacity
                                    onPress={() => {
-                                          Alert.alert("Logout", "Are you sure you want to Delete?", [
+                                          Alert.alert("Delete Task", "Are you sure you want to Delete?", [
                                                  { text: "Yes", onPress: () => dispatch(deleteTask(item.id)) },
                                                  { text: "No", onPress: () => console.log("Cancel Pressed") }
                                           ]);

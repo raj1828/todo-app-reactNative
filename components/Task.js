@@ -188,7 +188,15 @@ const Task = () => {
                                           <View style={styles.modalContainer}>
                                                  <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
                                                         <Text style={styles.modalTitle}>{isEditMode ? 'Edit Task' : 'Add Task'}</Text>
-                                                        <Button title="X" onPress={() => setModalVisible(false)} />
+                                                        <Button color="#f4511e" title="X" style={{backgroundColor: "#f4511e", width:40, alignItems:"center", justifyContent:"center"}} onPress={() => setModalVisible(false)} />
+                                                        {/* <TouchableOpacity title="X" style={{backgroundColor: "#f4511e",alignItems:"center", justifyContent: "center", width:40}} onPress={() => setModalVisible(false)} >
+                                                               <Icon
+                                                                        name="arrow-back-circle-outline"
+                                                                        size={25}
+                                                                        color="white"
+                                                                        onPress={() => setModalVisible(false)}
+                                                               />
+                                                        </TouchableOpacity> */}
                                                  </View>
 
                                                  <Text style={styles.modalContent}>Title</Text>
@@ -206,7 +214,8 @@ const Task = () => {
                                                         onChangeText={setDiscription}
                                                  />
 
-                                                 <Button title={isEditMode ? "Update" : "Add Task"} onPress={handleSaveButton} />
+                                                 <Button color="#f4511e" title={isEditMode ? "Update" : "Add Task"} onPress={handleSaveButton} />
+                                                 
                                           </View>
                                    </SafeAreaView>
                             </Modal>
