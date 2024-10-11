@@ -60,7 +60,7 @@ export default function SwitchApp() {
                                    </View>
                             ) : (
                                    <View>
-                                          <News />
+                                          <News  />
                                    </View>
                             )
                      }
