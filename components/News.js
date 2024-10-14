@@ -85,6 +85,7 @@ const News = () => {
        return (
               <View>
                      <FlatList
+                            
                             showsVerticalScrollIndicator={false}
                             data={newsArticles}
                             renderItem={renderItem}

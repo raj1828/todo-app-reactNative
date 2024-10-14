@@ -35,7 +35,7 @@ const TaskItems = ({ onEditTask, functionProps, selectedFilter, name }) => {
 
        const renderTaskItems = ({ item, index }) => (
               <View style={{
-                     width: '48%',
+                     width: '49%',
                      backgroundColor: index === 0 ? '#0096FF' : (item.status === 'completed' ? 'seagreen' : '#f4511e'),
                      padding: 15,
                      borderRadius: 10,
@@ -109,6 +109,7 @@ const TaskItems = ({ onEditTask, functionProps, selectedFilter, name }) => {
                      contentContainerStyle={styles.mainContainer}
                      showsVerticalScrollIndicator={true}
                      numColumns={2}
+                     style={{width:'100%'}}
               />
        );
 }

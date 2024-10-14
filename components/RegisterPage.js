@@ -54,7 +54,7 @@ const RegisterPage = () => {
                      <Text style={styles.title}>Register</Text>
                      <TextInput
                             style={styles.input}
-                            placeholder="Email"
+                            placeholder="Enter Email"
                             value={email}
                             onChangeText={setEmail}
                             keyboardType="email-address"
@@ -63,7 +63,7 @@ const RegisterPage = () => {
                      <View style={styles.passwordContainer}>
                             <TextInput
                                    style={styles.passwordInput}
-                                   placeholder="Password"
+                                   placeholder="Enter Password"
                                    value={password}
                                    onChangeText={setPassword}
                                    secureTextEntry={!showPassword}
