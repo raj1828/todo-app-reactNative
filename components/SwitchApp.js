@@ -56,10 +56,10 @@ export default function SwitchApp() {
                      {
                             selectedTab == 0 ? (
                                    <View>
-                                          <Task />
+                                          <Task/>
                                    </View>
                             ) : (
-                                   <View>
+                                   <View style={{paddingBottom:190}}>
                                           <News  />
                                    </View>
                             )

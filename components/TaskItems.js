@@ -152,12 +152,12 @@ const styles = StyleSheet.create({
               marginBottom: 5,
        },
        title: {
-              fontSize: 14,
+              fontSize: 16,
               color: '#fff',
               marginBottom: 10,
        },
        desc: {
-              fontSize: 12,
+              fontSize: 14,
               color: '#fff',
               marginBottom: 10,
        },
