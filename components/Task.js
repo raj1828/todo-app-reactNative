@@ -144,6 +144,7 @@ const Task = () => {
                             title: trimTitle,
                             description: trimDescription,
                             status: 'pending',
+                            createdAt: new Date().toISOString()
                      };
 
                      if (isEditMode) {
