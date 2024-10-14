@@ -173,16 +173,7 @@ const Task = () => {
                      console.log("Error in saving: ", error);
                      Alert.alert('Error in Saving from our Side, Please try again later!!');
               }
-              // } catch (error) {
-              //     console.log("Error in saving : ",error);
-              //     Alert.alert('Error in Saving from our Side, Please try again later!!')
-              // }
-
-
        };
-
-       
-
        return (
               <View>
                      <View style={styles.centerdView}>
@@ -195,7 +186,7 @@ const Task = () => {
                                           <View style={styles.modalContainer}>
                                                  <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
                                                         <Text style={styles.modalTitle}>{isEditMode ? 'Edit Task' : 'Add Task'}</Text>
-                                                        <Button color="#f4511e" title="X" style={{backgroundColor: "#f4511e", width:40, alignItems:"center", justifyContent:"center"}} onPress={() => setModalVisible(false)} />
+                                                        <Button color="#f4511e" title="X" style={{ backgroundColor: "#f4511e", width: 40, alignItems: "center", justifyContent: "center" }} onPress={() => setModalVisible(false)} />
                                                         {/* <TouchableOpacity title="X" style={{backgroundColor: "#f4511e",alignItems:"center", justifyContent: "center", width:40}} onPress={() => setModalVisible(false)} >
                                                                <Icon
                                                                         name="arrow-back-circle-outline"
@@ -222,7 +213,7 @@ const Task = () => {
                                                  />
 
                                                  <Button color="#f4511e" title={isEditMode ? "Update" : "Add Task"} onPress={handleSaveButton} />
-                                                 
+
                                           </View>
                                    </SafeAreaView>
                             </Modal>
@@ -262,8 +253,6 @@ const Task = () => {
                                    </View>
 
                             </TouchableWithoutFeedback>
-
-
                             <View
                                    style={styles.header}
                             >
@@ -278,49 +267,35 @@ const Task = () => {
 
 
                                    </TouchableOpacity>
-
-
-
                                    <TouchableOpacity onPress={() => setIsFilterModal(true)}>
                                           <Icon name="filter-outline" size={25} color="#f4511e" />
                                    </TouchableOpacity>
-
-
-
-                                   {/* <View style={{marginLeft:40}}>
-                             <Button
-                                   title="Log Out"
-                                   style={{ height: 40 }}
-                                   onPress={handelLogout}
-                            /> 
-                            </View> */}
-
 
                             </View>
                             <ProgressBar style={styles.progressBar} progress={progress} width={350} height={20} color="seagreen" borderWidth={2} borderColor="#ddd"
                                    borderRadius={5} />
 
                             {/* Search Bar */}
-                            <View style={{paddingHorizontal: 40 ,flexDirection: "row", justifyContent:"space-between", width: "100%", alignItems:"center"}}>
+                            <View style={{ paddingHorizontal: 40, flexDirection: "row", justifyContent: "space-between", width: "100%", alignItems: "center" }}>
                                    <TextInput
-                                                               style={{
-                                                                      width: '100%',
-                                                                      height: 40,
-                                                                      borderColor: '#ddd',
-                                                                      borderWidth: 1,
-                                                                      borderRadius: 5,
-                                                                      paddingHorizontal: 10,
-                                                               }}
-                                                               placeholder="Search Notes"
-                                                               value={search}
-                                                               onChangeText={setSearch}
-                                                        />
+                                          style={{
+                                                 width: '100%',
+                                                 height: 40,
+                                                 borderColor: '#ddd',
+                                                 borderWidth: 1,
+                                                 borderRadius: 5,
+                                                 paddingHorizontal: 10,
+                                          }}
+                                          placeholder="Search Notes"
+                                          value={search}
+                                          onChangeText={setSearch}
+                                   />
                                    {/* <TouchableOpacity onPress={handelSearch}>
                                           <Icon name="search-outline" size={24} />
                                    </TouchableOpacity> */}
                             </View>
 
-                            <TaskItems onEditTask={handleEditTask} functionProps={handelProgressChange} selectedFilter={selectedFilter} search= {search} name="s" />
+                            <TaskItems onEditTask={handleEditTask} functionProps={handelProgressChange} selectedFilter={selectedFilter} search={search} name="s" />
 
                             {/* <Translation/>      */}
 
@@ -362,7 +337,7 @@ const styles = StyleSheet.create({
               justifyContent: 'center',
               alignItems: 'center',
               // marginTop: 22,
-              paddingBottom:110,
+              paddingBottom: 110,
               backgroundColor: "#fff",
        },
        modalView: {

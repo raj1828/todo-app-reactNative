@@ -14,6 +14,7 @@ const TaskItems = ({ onEditTask, functionProps, selectedFilter, name, search }) 
        const [mark, setMark] = useState('pending');
        const dispatch = useDispatch();
        const [progress, setProgress] = useState(0);
+       const [debouncedSearch, setDebouncedSearch] = useState(search);
 
        const completedTasks = tasks.filter(task => task.status === 'completed');
 
@@ -22,9 +23,21 @@ const TaskItems = ({ onEditTask, functionProps, selectedFilter, name, search }) 
               selectedFilter === 'all' ? true : task.status === selectedFilter
        );
 
-       const searchTask = tasks.filter(task => 
-              search.toLowerCase() === ''? true : task.title.toLowerCase().includes(search.toLowerCase())
+       const searchTask = tasks.filter(task =>
+              debouncedSearch.toLowerCase() === '' ? true : task.title.toLowerCase().includes(debouncedSearch.toLowerCase())
        );
+
+       // UseEffect to update the debounced search term after a delay
+       useEffect(() => {
+              const handler = setTimeout(() => {
+                     setDebouncedSearch(search);
+              }, 300); // 300ms delay
+
+              // Clear the timeout if search changes within the delay
+              return () => {
+                     clearTimeout(handler);
+              };
+       }, [search]);
 
        useEffect(() => {
               const progressRes = totalTask === 0 ? 0 : (completedTasks.length / totalTask);
@@ -52,7 +65,7 @@ const TaskItems = ({ onEditTask, functionProps, selectedFilter, name, search }) 
                      shadowOffset: { width: 0, height: 2 },
                      shadowRadius: 4,
                      elevation: 5,
-                     
+
               }}>
                      <Text style={styles.heading}>{index === 0 ? "New Note:" : "Note:"}</Text>
                      <Text style={styles.title}>{item.title}</Text>
@@ -70,7 +83,7 @@ const TaskItems = ({ onEditTask, functionProps, selectedFilter, name, search }) 
                             </TouchableOpacity>
                      </View>
 
-                     <View style={styles.actionBtn}>    
+                     <View style={styles.actionBtn}>
                             <TouchableOpacity onPress={() => onEditTask(item)} style={{
                                    backgroundColor: item.status === 'completed' ? '#62AB37' : '#dd2c00',
                                    padding: 10,
@@ -110,13 +123,13 @@ const TaskItems = ({ onEditTask, functionProps, selectedFilter, name, search }) 
        return (
               <FlatList
                      // data={[...filteredTasks].reverse()}
-                     data = {search ? searchTask : [...filteredTasks].reverse()}
+                     data={search ? searchTask : [...filteredTasks].reverse()}
                      renderItem={renderTaskItems}
                      keyExtractor={(item) => item.id.toString()}
                      contentContainerStyle={styles.mainContainer}
                      showsVerticalScrollIndicator={true}
                      numColumns={2}
-                     style={{width:'100%'}}
+                     style={{ width: '100%' }}
               />
        );
 }
