@@ -28,11 +28,16 @@ const Task = () => {
        const [date, setDate] = useState(new Date())
        const tasks = useSelector(state => state.tasks.tasks);
        const [progress, setProgress] = useState(0)
+       const [search, setSearch] = useState('');
 
        const handelProgressChange = (progressRes,) => {
               setProgress(progressRes);
        };
 
+       const handelSearch = () => {
+              // setSearch(search);
+              Alert.alert("Search")
+       };
 
        const filtersData = [
               { label: 'All Tasks', value: 'all' },
@@ -176,6 +181,8 @@ const Task = () => {
 
        };
 
+       
+
        return (
               <View>
                      <View style={styles.centerdView}>
@@ -293,7 +300,27 @@ const Task = () => {
                             <ProgressBar style={styles.progressBar} progress={progress} width={350} height={20} color="seagreen" borderWidth={2} borderColor="#ddd"
                                    borderRadius={5} />
 
-                            <TaskItems onEditTask={handleEditTask} functionProps={handelProgressChange} selectedFilter={selectedFilter} name="s" />
+                            {/* Search Bar */}
+                            <View style={{paddingHorizontal: 40 ,flexDirection: "row", justifyContent:"space-between", width: "100%", alignItems:"center"}}>
+                                   <TextInput
+                                                               style={{
+                                                                      width: '100%',
+                                                                      height: 40,
+                                                                      borderColor: '#ddd',
+                                                                      borderWidth: 1,
+                                                                      borderRadius: 5,
+                                                                      paddingHorizontal: 10,
+                                                               }}
+                                                               placeholder="Search Notes"
+                                                               value={search}
+                                                               onChangeText={setSearch}
+                                                        />
+                                   {/* <TouchableOpacity onPress={handelSearch}>
+                                          <Icon name="search-outline" size={24} />
+                                   </TouchableOpacity> */}
+                            </View>
+
+                            <TaskItems onEditTask={handleEditTask} functionProps={handelProgressChange} selectedFilter={selectedFilter} search= {search} name="s" />
 
                             {/* <Translation/>      */}
 

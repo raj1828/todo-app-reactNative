@@ -7,7 +7,8 @@ import Icon from "react-native-vector-icons/Ionicons";
 import { editTask } from '../features/tasksSlice';
 
 
-const TaskItems = ({ onEditTask, functionProps, selectedFilter, name }) => {
+const TaskItems = ({ onEditTask, functionProps, selectedFilter, name, search }) => {
+       // console.log(search)
        const tasks = useSelector(state => state.tasks);
        const totalTask = tasks.length;
        const [mark, setMark] = useState('pending');
@@ -19,6 +20,10 @@ const TaskItems = ({ onEditTask, functionProps, selectedFilter, name }) => {
        // Filter tasks based on selectedFilter
        const filteredTasks = tasks.filter(task =>
               selectedFilter === 'all' ? true : task.status === selectedFilter
+       );
+
+       const searchTask = tasks.filter(task => 
+              search.toLowerCase() === ''? true : task.title.toLowerCase().includes(search.toLowerCase())
        );
 
        useEffect(() => {
@@ -36,7 +41,8 @@ const TaskItems = ({ onEditTask, functionProps, selectedFilter, name }) => {
        const renderTaskItems = ({ item, index }) => (
               <View style={{
                      width: '49%',
-                     backgroundColor: index === 0 ? '#0096FF' : (item.status === 'completed' ? 'seagreen' : '#f4511e'),
+                     // backgroundColor: index === 0 ? '#0096FF' : (item.status === 'completed' ? 'seagreen' : '#f4511e'),
+                     backgroundColor: item.status === 'completed' ? 'seagreen' : (index === 0 ? '#0096FF' : '#f4511e'),
                      padding: 15,
                      borderRadius: 10,
                      marginBottom: 15,
@@ -103,7 +109,8 @@ const TaskItems = ({ onEditTask, functionProps, selectedFilter, name }) => {
 
        return (
               <FlatList
-                     data={[...filteredTasks].reverse()}
+                     // data={[...filteredTasks].reverse()}
+                     data = {search ? searchTask : [...filteredTasks].reverse()}
                      renderItem={renderTaskItems}
                      keyExtractor={(item) => item.id.toString()}
                      contentContainerStyle={styles.mainContainer}

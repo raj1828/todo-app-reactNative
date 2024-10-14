@@ -1,10 +1,23 @@
-import { StyleSheet, Text, View, ScrollView, Image, TouchableOpacity, Linking } from 'react-native';
-import React from 'react';
+import { StyleSheet, Text, View, ScrollView, Image, TouchableOpacity, BackHandler, Linking } from 'react-native';
+import React, {useEffect} from 'react';
 import { useRoute } from '@react-navigation/native';
+import { useNavigation } from 'expo-router';
 
 export default function NewsDetails() {
   const route = useRoute();
-  const { newsItem } = route.params; 
+  const { newsItem } = route.params;
+  const navigation = useNavigation();
+
+  useEffect(() => {
+    const backFunction = () => {
+           navigation.navigate('Tasks');
+           return true;
+    };
+
+    const backHandler = BackHandler.addEventListener('hardwareBackPress', backFunction)
+
+    return () => backHandler.remove();
+}, [])
 
   return (
     <ScrollView style={styles.container}>
