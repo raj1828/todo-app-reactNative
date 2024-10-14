@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, TextInput, Alert, Text, TouchableOpacity, StyleSheet } from 'react-native';
+import { View, TextInput, Alert, Text, TouchableOpacity, StyleSheet, BackHandler } from 'react-native';
 import { useDispatch } from 'react-redux';
 import { login } from '../features/authSlice';
 import { loadUserFromLocalStorage } from '../features/storage';
@@ -15,6 +15,17 @@ const LoginPage = () => {
        const [showPassword, setShowPassword] = useState(false);
        const dispatch = useDispatch();
        const navigation = useNavigation();
+
+       useEffect(() => {
+              const backFunction = () => {
+                     navigation.navigate('Register');
+                     return true;
+              };
+
+              const backHandler = BackHandler.addEventListener('hardwareBackPress', backFunction)
+
+              return () => backHandler.remove();
+       }, [])
 
        useEffect(() => {
               const fetchUsers = async () => {
