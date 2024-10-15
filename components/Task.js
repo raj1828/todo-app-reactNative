@@ -21,6 +21,7 @@ const Task = () => {
        const [isEditMode, setEditMode] = useState(false);
        const [taskToEdit, setTaskToEdit] = useState(null);
        const [selectedFilter, setSelectedFilter] = useState("all");
+       const [selectedFilterCheck, setSelectedFilterCheck] = useState("all");
        const [title, setTitle] = useState('');
        const [description, setDiscription] = useState('all');
        const navigation = useNavigation();
@@ -183,6 +184,7 @@ const Task = () => {
                                    animationType="slide"
                                    visible={modalVisible}
                             >
+                                   <TouchableWithoutFeedback onPress={() => setModalVisible(false)}>
                                    <SafeAreaView style={styles.safeArea}>
                                           <View style={styles.modalContainer}>
                                                  <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
@@ -217,10 +219,10 @@ const Task = () => {
 
                                           </View>
                                    </SafeAreaView>
+                                   </TouchableWithoutFeedback>
                             </Modal>
 
                             {/* Filter Modal */}
-                            <TouchableWithoutFeedback onPress={() => setIsFilterModal(false)}>
                                    <View>
 
                                           <Modal
@@ -228,6 +230,7 @@ const Task = () => {
                                                  animationType="fade"
                                                  visible={isFilterModal}
                                           >
+                            <TouchableWithoutFeedback onPress={() => setIsFilterModal(false)}>
                                                  <SafeAreaView style={styles.modalArea}>
                                                         <View style={styles.filterModal}>
 
@@ -238,22 +241,25 @@ const Task = () => {
                                                                       labelField="label"
                                                                       valueField="value"
                                                                       placeholder="Filters"
-                                                                      value={selectedFilter}
-                                                                      onChange={item => {
-                                                                             setSelectedFilter(item.value);
-                                                                      }}
+                                                                      value={selectedFilterCheck}
+                                                                       onChange={item => {
+                                                                              setSelectedFilterCheck(item.value);
+                                                                       }}
                                                                       style={styles.dropdown}
                                                                       containerStyle={styles.dropdownContainer}
                                                                />
 
 
-                                                               <Button title="Close" onPress={handelFilter} />
+                                                               <Button title="Filter" onPress={() =>{
+                                                                      setSelectedFilter(selectedFilterCheck)
+                                                                      setIsFilterModal(false)
+                                                               } } />
                                                         </View>
                                                  </SafeAreaView>
+                            </TouchableWithoutFeedback>
                                           </Modal>
                                    </View>
 
-                            </TouchableWithoutFeedback>
                             <View
                                    style={styles.header}
                             >

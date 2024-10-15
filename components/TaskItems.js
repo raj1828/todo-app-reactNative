@@ -68,7 +68,7 @@ const TaskItems = ({ onEditTask, functionProps, selectedFilter, name, search }) 
                      shadowRadius: 4,
                      elevation: 5,
               }}>
-                     <Text style={styles.heading}>{index === 0 ? "New Note:" : "Note:"}</Text>
+                     <Text style={styles.heading}>{ "Note:"}</Text>
                      <Text style={styles.title}>{item.title}</Text>
                      <Text style={styles.desc}>{item.description}</Text>
                      <View style={styles.statusView}>

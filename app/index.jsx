@@ -20,17 +20,24 @@ export default function Index() {
 
   useEffect(() => {
     const backAction = () => {
-      Alert.alert("Logout", "Do you want to logout?", [
+      Alert.alert("Logout or Exit", "Do you want to logout? or exit app?", [
         {
           text: "Cancel",
           onPress: () => null,
           style: "cancel",
         },
         {
-          text: "OK",
+          text: "Logout",
           onPress: () => {
             //  AsyncStorage.clear(); 
             navigation.navigate('Login');
+          },
+        },
+        {
+          text: "Exit",
+          onPress: () => {
+            //  AsyncStorage.clear(); 
+            BackHandler.exitApp();
           },
         },
       ]);
