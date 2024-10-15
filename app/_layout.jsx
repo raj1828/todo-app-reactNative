@@ -9,6 +9,7 @@ import { TouchableOpacity, Alert } from "react-native";
 import Icon from "react-native-vector-icons/Ionicons";
 import NewsDetails from "../components/NewsDetails";
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
+import { Colors } from "@/constants/AppColors";
 
 const Stack = createNativeStackNavigator();
 
@@ -41,7 +42,7 @@ export default function RootLayout() {
                                                                </TouchableOpacity>
                                                         ),
                                                         headerStyle: {
-                                                               backgroundColor: "#f4511e",
+                                                               backgroundColor: Colors.orange,
                                                                color: "#fff",
                                                         },
                                                         headerBackVisible: false,

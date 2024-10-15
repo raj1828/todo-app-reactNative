@@ -6,7 +6,9 @@ const storeUsers = "users"
 export const saveToLocalStorage = async (tasks) => {
        try {
               const jsonValue = JSON.stringify(tasks);
+              // console.log("in SaveToLocalStorage function : ", jsonValue)
               await AsyncStorage.setItem(storeTaskName, jsonValue)
+              
        } catch (error) {
               console.log('Error in Save Task : ', error)
        }

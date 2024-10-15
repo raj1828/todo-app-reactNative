@@ -8,6 +8,7 @@ import Icon from "react-native-vector-icons/Ionicons";
 const TaskItems = ({ onEditTask, functionProps, selectedFilter, name, search }) => {
        const tasks = useSelector(state => state.tasks);
        const dispatch = useDispatch();
+       console.log(tasks)
 
        const [progress, setProgress] = useState(0);
        const [debouncedSearch, setDebouncedSearch] = useState(search);
